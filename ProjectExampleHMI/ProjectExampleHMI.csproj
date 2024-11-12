@@ -94,8 +94,11 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <None Update="appsettings.json">
+        <None Update="appsettings.mac.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.win.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ TestResults/
 .idea/
 .vs/
 *.code-workspace
+*.user
 
 *.DS_Store
 

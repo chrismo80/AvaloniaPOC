@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Runtime.InteropServices;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using CompanyName.Core;
 
@@ -6,6 +8,8 @@ namespace ProjectExampleHMI;
 
 internal static class Services
 {
+    static readonly string _platform = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "mac" : "win";
+    
     internal static IServiceCollection Setup() => new ServiceCollection()
 
         // Dependency injections (singletons), all their 'CompanyName' interfaces are automatically resolvable
@@ -32,5 +36,5 @@ internal static class Services
         .AddSingleton<Models.Inspection3>()
 
         // Application config(s), resolvable as 'IConfiguration'
-        .AddConfiguration("appsettings.json");
+        .AddConfiguration($"appsettings.{_platform}.json");
 }
