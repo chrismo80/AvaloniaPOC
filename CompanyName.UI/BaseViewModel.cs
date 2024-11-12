@@ -22,8 +22,6 @@ public abstract class BaseViewModel : ObservableObject
     /// Simple private void view model methods are enough<br/>
     /// Methods with default parameter values are supported
     /// </summary>
-    /// <param name="methodName">the view model method to execute</param>
-    /// <returns>a task of the execution</returns>
     public async Task Execute(string methodName)
     {
         try

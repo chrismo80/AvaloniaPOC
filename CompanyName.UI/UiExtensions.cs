@@ -139,7 +139,7 @@ public static class UiExtensions
         .AddTransients<BaseViewModel>(Assembly.GetExecutingAssembly())
         .AddTransients<BaseWindow>(Assembly.GetExecutingAssembly())
 
-        // add all viewmodels and windows of entry assembly (custom project)
+        // add all view models and windows of entry assembly (custom project)
         .AddTransients<BaseViewModel>(Assembly.GetEntryAssembly()!)
         .AddTransients<BaseWindow>(Assembly.GetEntryAssembly()!)
 
