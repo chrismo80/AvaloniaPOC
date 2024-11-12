@@ -1,25 +1,17 @@
 using CompanyName.Core.Messages;
 
-namespace UnitTests;
+namespace UnitTests.ManagerTests;
 
 [TestClass]
-public class MessageTests
+public class MessageTests : ManagerTests<MessageManager>
 {
 	const int INITIAL_ACTIVE_MESSAGES = 10;
 	const int INITIAL_ARCHIVED_MESSAGES = 0;
 
-	MessageManager _sut = null!;
-
-	[TestInitialize]
-	public void Initialize()
+	protected override void InitialAsserts()
 	{
-		_sut = CreateSubjectUnderTest();
-	}
-
-	[TestCleanup]
-	public void Cleanup()
-	{
-		_sut.Dispose();
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, _sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES, _sut.ArchivedMessages.Count);
 	}
 
 	[TestMethod]
@@ -53,15 +45,5 @@ public class MessageTests
 
 		this.CreateMessage("Message", MessageType.Information);
 		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, _sut.ActiveMessages.Count);
-	}
-
-	private static MessageManager CreateSubjectUnderTest()
-	{
-		var sut = new MessageManager();
-
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, sut.ActiveMessages.Count);
-		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES, sut.ArchivedMessages.Count);
-
-		return sut;
 	}
 }

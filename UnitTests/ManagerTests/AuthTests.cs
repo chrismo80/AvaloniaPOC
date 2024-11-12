@@ -1,26 +1,17 @@
 using CompanyName.Core.Auth;
 
-namespace UnitTests;
+namespace UnitTests.ManagerTests;
 
 [TestClass]
-public class AuthTests
+public class AuthTests : ManagerTests<AuthManager>
 {
 	private const string USER_NAME = "user";
 	private const string CORRECT_PASSWORD = "pass";
 	private const string WRONG_PASSWORD = "password";
 
-	AuthManager _sut = null!;
-
-	[TestInitialize]
-	public void Initialize()
+	protected override void InitialAsserts()
 	{
-		_sut = CreateSubjectUnderTest();
-	}
-
-	[TestCleanup]
-	public void Cleanup()
-	{
-		_sut.Dispose();
+		Assert.AreEqual("", _sut.User);
 	}
 
 	[TestMethod]
@@ -49,15 +40,5 @@ public class AuthTests
 		_sut.Logout();
 
 		Assert.AreEqual("", _sut.User);
-	}
-
-
-	private static AuthManager CreateSubjectUnderTest()
-	{
-		var sut = new AuthManager();
-
-		Assert.AreEqual("", sut.User);
-
-		return sut;
 	}
 }
