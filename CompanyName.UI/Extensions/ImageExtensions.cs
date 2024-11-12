@@ -1,36 +1,37 @@
-﻿#pragma warning disable CA1416 // Validate platform compatibility
+﻿using System.Drawing.Imaging;
+using Avalonia.Media.Imaging;
+
+#pragma warning disable CA1416 // Validate platform compatibility
 
 namespace CompanyName.UI.Extensions;
 
 public static class ImageExtensions
 {
-    public static Avalonia.Media.Imaging.Bitmap? ToBitmap(this System.Drawing.Bitmap source)
+    public static Bitmap? ToBitmap(this System.Drawing.Bitmap? source)
     {
         if (source == null)
             return null;
 
-        using (var stream = new MemoryStream())
-        {
-            source?.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+        using var stream = new MemoryStream();
 
-            stream.Position = 0;
+        source?.Save(stream, ImageFormat.Png);
 
-            return new Avalonia.Media.Imaging.Bitmap(stream);
-        }
+        stream.Position = 0;
+
+        return new Bitmap(stream);
     }
 
-    public static System.Drawing.Bitmap? ToBitmap(this Avalonia.Media.Imaging.Bitmap source)
+    public static System.Drawing.Bitmap? ToBitmap(this Bitmap? source)
     {
         if (source == null)
             return null;
 
-        using (var stream = new MemoryStream())
-        {
-            source?.Save(stream);
+        using var stream = new MemoryStream();
 
-            stream.Position = 0;
+        source?.Save(stream);
 
-            return new System.Drawing.Bitmap(stream);
-        }
+        stream.Position = 0;
+
+        return new System.Drawing.Bitmap(stream);
     }
 }
