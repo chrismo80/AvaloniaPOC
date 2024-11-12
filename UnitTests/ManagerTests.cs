@@ -4,18 +4,18 @@ namespace UnitTests;
 
 public abstract class ManagerTests<T> where T : Manager
 {
-	protected T _sut = null!;
+	protected T Sut = null!;
 
 	[TestInitialize]
 	public void Initialize()
 	{
-		_sut = Activator.CreateInstance<T>();
+		Sut = Activator.CreateInstance<T>();
 
 		InitialAsserts();
 	}
 
 	[TestCleanup]
-	public void Cleanup() => _sut.Dispose();
+	public void Cleanup() => Sut.Dispose();
 
 	protected abstract void InitialAsserts();
 }

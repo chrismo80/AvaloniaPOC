@@ -11,47 +11,47 @@ public class AuthTests : ManagerTests<AuthManager>
 
 	protected override void InitialAsserts()
 	{
-		Assert.AreEqual("", _sut.User);
+		Assert.AreEqual("", Sut.User);
 	}
 
 	[TestMethod]
 	public void Login_WrongPassword_NotLoggedIn()
 	{
-		var success = _sut.Login(USER_NAME, WRONG_PASSWORD);
+		var success = Sut.Login(USER_NAME, WRONG_PASSWORD);
 
 		Assert.IsFalse(success);
-		Assert.AreEqual("", _sut.User);
+		Assert.AreEqual("", Sut.User);
 	}
 
 	[TestMethod]
 	public void Login_CorrectPassword_LoggedIn()
 	{
-		var success = _sut.Login(USER_NAME, CORRECT_PASSWORD);
+		var success = Sut.Login(USER_NAME, CORRECT_PASSWORD);
 
 		Assert.IsTrue(success);
-		Assert.AreEqual(USER_NAME, _sut.User);
+		Assert.AreEqual(USER_NAME, Sut.User);
 	}
 
 	[TestMethod]
 	public void Logout_AfterLogin_LoggedOut()
 	{
-		var success = _sut.Login(USER_NAME, CORRECT_PASSWORD);
+		var success = Sut.Login(USER_NAME, CORRECT_PASSWORD);
 
 		Assert.IsTrue(success);
-		Assert.AreEqual(USER_NAME, _sut.User);
+		Assert.AreEqual(USER_NAME, Sut.User);
 
-		success = _sut.Logout();
+		success = Sut.Logout();
 
 		Assert.IsTrue(success);
-		Assert.AreEqual("", _sut.User);
+		Assert.AreEqual("", Sut.User);
 	}
 
 	[TestMethod]
 	public void Logout_WithoutLogin_NoException()
 	{
-		var success = _sut.Logout();
+		var success = Sut.Logout();
 
 		Assert.IsFalse(success);
-		Assert.AreEqual("", _sut.User);
+		Assert.AreEqual("", Sut.User);
 	}
 }

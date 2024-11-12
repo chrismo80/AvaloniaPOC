@@ -10,40 +10,40 @@ public class MessageTests : ManagerTests<MessageManager>
 
 	protected override void InitialAsserts()
 	{
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, _sut.ActiveMessages.Count);
-		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES, _sut.ArchivedMessages.Count);
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES, Sut.ArchivedMessages.Count);
 	}
 
 	[TestMethod]
 	public void CreateMessage_NewMessage_Success()
 	{
-		_sut.CreateMessage("Message 11", MessageType.Information);
+		Sut.CreateMessage("Message 11", MessageType.Information);
 
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, _sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, Sut.ActiveMessages.Count);
 	}
 
 	[TestMethod]
 	public void ArchiveMessage_LastActiveMessage_Success()
 	{
-		var message = _sut.ActiveMessages.Last();
+		var message = Sut.ActiveMessages.Last();
 
-		_sut.Archive(message);
+		Sut.Archive(message);
 
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, _sut.ActiveMessages.Count);
-		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES + 1, _sut.ArchivedMessages.Count);
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES + 1, Sut.ArchivedMessages.Count);
 
-		Assert.AreEqual(message, _sut.ArchivedMessages.Last());
+		Assert.AreEqual(message, Sut.ArchivedMessages.Last());
 	}
 
 	[TestMethod]
 	public void CreateMessage_WithExtension_Success()
 	{
 		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, _sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
 
-		_sut.ConfigureMessageExtensions();
+		Sut.ConfigureMessageExtensions();
 
 		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, _sut.ActiveMessages.Count);
+		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, Sut.ActiveMessages.Count);
 	}
 }
