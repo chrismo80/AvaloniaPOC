@@ -9,7 +9,7 @@ public partial class SplashScreen : Window
 {
     public SplashScreen() => InitializeComponent();
 
-    public async Task<ServiceProvider> Process(Func<IServiceCollection> setupCollection)
+    public async Task<ServiceProvider> Process(Func<IServiceCollection> buildServices)
     {
         try
         {
@@ -19,7 +19,7 @@ public partial class SplashScreen : Window
                 LoadingText.Text = Assets.Resources.Init;
             });
 
-            return await Task.Run(() => Init(setupCollection()));
+            return await Task.Run(() => Init(buildServices()));
         }
         catch (Exception ex)
         {
@@ -35,11 +35,11 @@ public partial class SplashScreen : Window
         }
     }
 
-    private ServiceProvider Init(IServiceCollection collection)
+    private ServiceProvider Init(IServiceCollection serviceCollection)
     {
-        var serviceProvider = collection.AddDefaultServices().BuildServiceProvider();
+        var serviceProvider = serviceCollection.AddDefaultServices().BuildServiceProvider();
 
-        var services = collection
+        var services = serviceCollection
             .Where(item => item.Lifetime == ServiceLifetime.Singleton && !item.ServiceType.IsInterface)
             .ToList();
 

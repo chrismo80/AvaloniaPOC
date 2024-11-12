@@ -28,7 +28,7 @@ public static class UiExtensions
     /// Opens the main window after service initialisation was successful
     /// </summary>
     public static async void StartWithSplashScreen<TWindow, TViewModel>(
-        this IClassicDesktopStyleApplicationLifetime desktop, Func<IServiceCollection> setupCollection)
+        this IClassicDesktopStyleApplicationLifetime desktop, Func<IServiceCollection> buildServices)
         where TWindow : Window
         where TViewModel : notnull
     {
@@ -38,7 +38,7 @@ public static class UiExtensions
         splashScreen.Show();
 
         // Init services with splash screen
-        var serviceProvider = await splashScreen.Process(setupCollection);
+        var serviceProvider = await splashScreen.Process(buildServices);
 
         // Dispose services when application is closed
         desktop.ShutdownRequested += (_, _) => serviceProvider.Dispose();
