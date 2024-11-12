@@ -22,7 +22,7 @@ public partial class App : Application
 
             // Desktop platforms (Windows, Linux, macOS) -> one or more windows
             case IClassicDesktopStyleApplicationLifetime desktop:
-                desktop.StartWithSplashScreen<Windows.MainWindow, ViewModels.MainWindowViewModel>(Services.Setup);
+                desktop.StartWithSplashScreen<Windows.MainWindow, ViewModels.MainWindowViewModel>(ServiceBuilder.Build);
 
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT

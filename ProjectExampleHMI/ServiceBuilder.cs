@@ -6,11 +6,11 @@ using CompanyName.Core;
 
 namespace ProjectExampleHMI;
 
-internal static class Services
+internal static class ServiceBuilder
 {
     static readonly string _platform = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win" : "mac";
     
-    internal static IServiceCollection Setup() => new ServiceCollection()
+    internal static IServiceCollection Build() => new ServiceCollection()
 
         // Dependency injections (singletons), all their 'CompanyName' interfaces are automatically resolvable
         .AddInterfacesOf<CompanyName.Core.Logging.FileLogger>()
