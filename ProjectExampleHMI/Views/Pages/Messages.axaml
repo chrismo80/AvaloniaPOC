@@ -1,0 +1,80 @@
+<UserControl x:Class="ProjectExampleHMI.Views.MessagesView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:assets="clr-namespace:CompanyName.UI.Assets;assembly=CompanyName.UI"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProjectExampleHMI.ViewModels"
+             d:DesignHeight="500"
+             d:DesignWidth="1000"
+             x:CompileBindings="True"
+             x:DataType="vm:MessagesViewModel"
+             mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:MessagesViewModel />
+    </Design.DataContext>
+    <Grid Margin="50"
+          RowDefinitions="*,100,200"
+          ShowGridLines="False">
+        <ListBox Grid.Row="0"
+                 BorderBrush="DarkGray"
+                 BorderThickness="1"
+                 ItemsSource="{Binding ActiveMessages}"
+                 SelectedIndex="{Binding SelectedIndex}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="20,10,50,10"
+                                   FontSize="20"
+                                   Text="{Binding Created}" />
+                        <TextBlock MinWidth="150"
+                                   Margin="20,10,0,10"
+                                   FontSize="20"
+                                   Text="{Binding Type}" />
+                        <TextBlock MinWidth="50"
+                                   Margin="20,10,20,10"
+                                   FontSize="20"
+                                   Text="{Binding Id}" />
+                        <TextBlock Margin="0,10,50,10"
+                                   FontSize="20"
+                                   Text="{Binding Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Spacing="5">
+            <Button Width="150"
+                    Height="70"
+                    HorizontalAlignment="Right"
+                    Command="{Binding Execute}"
+                    CommandParameter="Confirm"
+                    Content="{x:Static assets:Resources.Confirm}" />
+        </StackPanel>
+        <ListBox Grid.Row="2"
+                 BorderBrush="DarkGray"
+                 BorderThickness="1"
+                 ItemsSource="{Binding ArchivedMessages}"
+                 SelectedIndex="{Binding SelectedArchivedIndex}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="20,10,50,10"
+                                   FontSize="20"
+                                   Text="{Binding Created}" />
+                        <TextBlock Margin="20,10,0,10"
+                                   FontSize="20"
+                                   Text="{Binding Type}" />
+                        <TextBlock Margin="20,10,20,10"
+                                   FontSize="20"
+                                   Text="{Binding Id}" />
+                        <TextBlock Margin="0,10,50,10"
+                                   FontSize="20"
+                                   Text="{Binding Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

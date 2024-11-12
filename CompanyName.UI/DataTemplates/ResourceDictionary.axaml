@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Include external DataTemplates -->
+        <ResourceInclude Source="avares://CompanyName.UI/DataTemplates/Axis.axaml" />
+        <ResourceInclude Source="avares://CompanyName.UI/DataTemplates/Chart.axaml" />
+        <ResourceInclude Source="avares://CompanyName.UI/DataTemplates/ParameterMatchPair.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

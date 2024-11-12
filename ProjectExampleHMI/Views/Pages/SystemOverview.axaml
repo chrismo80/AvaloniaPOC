@@ -1,0 +1,62 @@
+<UserControl x:Class="ProjectExampleHMI.Views.SystemOverviewView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:assets="clr-namespace:ProjectExampleHMI.Assets"
+             xmlns:controls="using:CompanyName.UI.UserControls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ProjectExampleHMI.ViewModels"
+             d:DesignHeight="500"
+             d:DesignWidth="1000"
+             x:CompileBindings="True"
+             x:DataType="vm:SystemOverviewViewModel"
+             mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:SystemOverviewViewModel />
+    </Design.DataContext>
+    <StackPanel MinWidth="100"
+                Margin="50"
+                VerticalAlignment="Top"
+                Orientation="Vertical"
+                Spacing="5">
+        <TextBlock VerticalAlignment="Center"
+                   FontSize="16"
+                   Text="{Binding Message}"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+        <Image Height="200"
+               Margin="20"
+               Source="{Binding SomeBitmap}" />
+        <controls:StateButton Width="150"
+                              Height="50"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              Background="DarkSlateBlue"
+                              Content="Test"
+                              FontSize="24" />
+        <AutoCompleteBox Height="100" />
+        <Button Width="100"
+                Height="50"
+                Command="{Binding Execute}"
+                CommandParameter="GenerateMatch">            
+            Shuffle
+        </Button>
+        <TextBlock Margin="0,50,0,0"
+                   FontSize="28"
+                   Text="Ergebnisse"
+                   TextAlignment="Center" />
+        <ItemsControl ItemsSource="{Binding Measurements}">
+            <!-- Use a DockPanel to display all the modules -->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"
+                                Spacing="50" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <!-- DataTemplate for type 'ParameterMatchPair' defined in application resources -->
+                <StaticResource ResourceKey="ParameterMatchPairTemplate" />
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

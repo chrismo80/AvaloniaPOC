@@ -1,0 +1,79 @@
+<UserControl
+    x:Class="ProjectExampleHMI.Views.SystemDetailsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ProjectExampleHMI.ViewModels"
+    d:DesignHeight="1000"
+    d:DesignWidth="1500"
+    x:CompileBindings="True"
+    x:DataType="vm:SystemDetailsViewModel"
+    mc:Ignorable="d">
+
+  <Design.DataContext>
+    <vm:SystemDetailsViewModel />
+  </Design.DataContext>
+
+  <StackPanel
+      MinWidth="100"
+      Margin="50"
+      VerticalAlignment="Top"
+      Orientation="Vertical"
+      Spacing="20">
+    <TextBlock
+        VerticalAlignment="Center"
+        FontSize="16"
+        Text="{Binding Message}"
+        TextAlignment="Center"
+        TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="100">
+      <Button
+          Width="100"
+          Height="50"
+          Command="{Binding Execute}"
+          CommandParameter="SelectDevice1">
+        Device 1
+      </Button>
+      <Button
+          Width="100"
+          Height="50"
+          Command="{Binding Execute}"
+          CommandParameter="SelectDevice2">
+        Device 2
+      </Button>
+      <Button
+          Width="100"
+          Height="50"
+          Command="{Binding Execute}"
+          CommandParameter="SelectDevice3">
+        Device3
+      </Button>
+      <Button
+          Width="100"
+          Height="50"
+          Command="{Binding Execute}"
+          CommandParameter="SelectDevice4">
+        Device4
+      </Button>
+    </StackPanel>
+
+    <!--  This binds to the observable collection in the ViewModel  -->
+    <ItemsControl ItemsSource="{Binding Axes}">
+      <!--  Use a DockPanel to display all the modules  -->
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel
+              HorizontalAlignment="Center"
+              Orientation="Horizontal"
+              Spacing="20" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+
+      <ItemsControl.ItemTemplate>
+        <!--  DataTemplate for type 'Axis' defined in application resources  -->
+        <StaticResource ResourceKey="AxisTemplate" />
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

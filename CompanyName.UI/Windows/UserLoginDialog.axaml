@@ -1,0 +1,52 @@
+<Window x:Class="CompanyName.UI.Windows.UserLoginDialog"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:assets="clr-namespace:CompanyName.UI.Assets"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="500"
+        Height="350"
+        d:DesignHeight="300"
+        d:DesignWidth="500"
+        Background="Transparent"
+        CanResize="False"
+        SizeToContent="Manual"
+        SystemDecorations="None"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+    <Border Background="{StaticResource ThemeBackgroundBrush}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            CornerRadius="20">
+        <StackPanel Margin="30"
+                    VerticalAlignment="Center"
+                    Spacing="15">
+            <Label Content="{x:Static assets:Resources.LoginPrompt}"
+                   FontSize="18" />
+            <TextBox Name="UserName"
+                     FontSize="22"
+                     Text=""
+                     Watermark="{x:Static assets:Resources.Username}" />
+            <TextBox Name="Password"
+                     FontSize="22"
+                     PasswordChar="*"
+                     Text=""
+                     Watermark="{x:Static assets:Resources.Password}" />
+            <Label Name="Message"
+                   HorizontalAlignment="Center"
+                   FontSize="24" />
+            <DockPanel MinHeight="50">
+                <Button MinWidth="100"
+                        HorizontalAlignment="Left"
+                        Click="Close"
+                        Content="{x:Static assets:Resources.Abort}"
+                        FontSize="18" />
+                <Button MinWidth="100"
+                        HorizontalAlignment="Right"
+                        Click="Validate"
+                        Content="{x:Static assets:Resources.Ok}"
+                        FontSize="18" />
+            </DockPanel>
+        </StackPanel>
+    </Border>
+</Window>

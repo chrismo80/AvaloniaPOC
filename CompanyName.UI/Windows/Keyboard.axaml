@@ -1,0 +1,131 @@
+<Window x:Class="CompanyName.UI.Windows.Keyboard"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="1045"
+        Height="530"
+        d:DesignHeight="530"
+        d:DesignWidth="1045"
+        Background="Transparent"
+        CanResize="False"
+        SizeToContent="Manual"
+        SystemDecorations="None"
+        WindowStartupLocation="Manual"
+        mc:Ignorable="d">
+    <Border Name="Frame"
+            Background="{StaticResource ThemeBackgroundBrush}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            CornerRadius="20"
+            Opacity="0.9">
+        <StackPanel Margin="30"
+                    VerticalAlignment="Center"
+                    Spacing="15">
+            <DockPanel LastChildFill="True">
+                <Button Width="80"
+                        Height="80"
+                        Margin="30,0,0,0"
+                        HorizontalAlignment="Right"
+                        Click="Abort"
+                        CornerRadius="5"
+                        DockPanel.Dock="Right"
+                        FontSize="36"
+                        FontWeight="Bold">                    
+                    ✕
+                </Button>
+                <TextBox Name="ResultTextBox"
+                         Height="80"
+                         VerticalAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         CornerRadius="5"
+                         FontSize="30"
+                         FontWeight="Bold"
+                         Text=""
+                         Watermark="" />
+            </DockPanel>
+            <StackPanel Name="Row1"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="10" />
+            <StackPanel Name="Row2"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="10" />
+            <DockPanel LastChildFill="True">
+                <Button Name="ShiftButton"
+                        Width="120"
+                        Height="80"
+                        HorizontalAlignment="Left"
+                        Click="ToggleShift"
+                        CornerRadius="5"
+                        DockPanel.Dock="Left"
+                        FontSize="36">                    
+                    ⇧
+                </Button>
+                <Button Width="120"
+                        Height="80"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Right"
+                        Click="BackSpace"
+                        CornerRadius="5"
+                        DockPanel.Dock="Right"
+                        FontSize="36">                    
+                    ⌫
+                </Button>
+                <StackPanel Name="Row3"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10" />
+            </DockPanel>
+            <DockPanel LastChildFill="True">
+                <Button Name="SymbolsButton"
+                        Width="120"
+                        HorizontalAlignment="Left"
+                        Click="ToggleSymbols"
+                        CornerRadius="5"
+                        DockPanel.Dock="Left"
+                        FontSize="18"
+                        FontWeight="Bold">                    
+                    123
+                </Button>
+                <Button Name="CultureButton"
+                        Width="120"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        Click="NextCulture"
+                        CornerRadius="5"
+                        DockPanel.Dock="Left"
+                        FontSize="18"
+                        FontWeight="Bold">                    
+                    culture
+                </Button>
+                <Button Width="120"
+                        HorizontalAlignment="Right"
+                        Click="Done"
+                        CornerRadius="5"
+                        DockPanel.Dock="Right"
+                        FontSize="42">                    
+                    ⏎
+                </Button>
+                <Button Name="DecimalButton"
+                        Width="120"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Click="AddDecimal"
+                        CornerRadius="5"
+                        DockPanel.Dock="Right"
+                        FontSize="24"
+                        FontWeight="Bold">                    
+                    decimal
+                </Button>
+                <Button Height="80"
+                        Margin="30,0,30,0"
+                        Click="Space"
+                        CornerRadius="5"
+                        FontSize="18" />
+            </DockPanel>
+        </StackPanel>
+    </Border>
+</Window>

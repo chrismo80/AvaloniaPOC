@@ -1,0 +1,331 @@
+<UserControl
+    x:Class="ProjectExampleHMI.Views.AutomationView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ProjectExampleHMI.ViewModels"
+    d:DesignHeight="1000"
+    d:DesignWidth="1900"
+    x:CompileBindings="True"
+    x:DataType="vm:AutomationViewModel"
+    mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:AutomationViewModel />
+  </Design.DataContext>
+  <DockPanel Margin="50" LastChildFill="True">
+    <TextBlock
+        Height="350"
+        VerticalAlignment="Center"
+        DockPanel.Dock="Top"
+        FontSize="16"
+        Text="{Binding Message}"
+        TextAlignment="Center"
+        TextWrapping="Wrap" />
+    <UniformGrid
+        Margin="300,0,300,0"
+        Columns="5"
+        Rows="5">
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="765.5" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Keyboard Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="54" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="Input Test" />
+      </StackPanel>
+      <StackPanel Spacing="10">
+        <NumericUpDown
+            Width="200"
+            FontSize="22"
+            FormatString="0.00"
+            Value="345" />
+        <TextBox
+            Width="200"
+            FontSize="22"
+            Text=""
+            Watermark="DMC scannen" />
+      </StackPanel>
+    </UniformGrid>
+  </DockPanel>
+</UserControl>

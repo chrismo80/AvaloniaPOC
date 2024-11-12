@@ -1,0 +1,21 @@
+<Application x:Class="ProjectExampleHMI.App"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:CompanyNameui="using:CompanyName.UI"
+             xmlns:local="using:ProjectExampleHMI"
+             RequestedThemeVariant="Default">
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <Application.DataTemplates>
+        <CompanyNameui:ViewLocator />
+    </Application.DataTemplates>
+    <Application.Styles>
+        <SimpleTheme />
+    </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://CompanyName.UI/DataTemplates/ResourceDictionary.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,62 @@
+<UserControl
+    x:Class="ProjectExampleHMI.Views.SystemView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:assets="clr-namespace:ProjectExampleHMI.Assets"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ProjectExampleHMI.ViewModels"
+    d:DesignHeight="500"
+    d:DesignWidth="1000"
+    x:CompileBindings="True"
+    x:DataType="vm:SystemViewModel"
+    mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:SystemViewModel />
+  </Design.DataContext>
+
+  <DockPanel LastChildFill="True">
+    <StackPanel
+        Width="200"
+        Margin="10"
+        VerticalAlignment="Top"
+        DockPanel.Dock="Left"
+        Orientation="Vertical"
+        Spacing="10">
+      <Button
+          Height="100"
+          Command="{Binding SelectPage}"
+          CommandParameter="Overview"
+          Content="{x:Static assets:Resources.Overview}"
+          CornerRadius="10"
+          FontSize="18" />
+      <Button
+          Height="100"
+          Command="{Binding SelectPage}"
+          CommandParameter="Details"
+          Content="Details"
+          CornerRadius="10"
+          FontSize="18" />
+      <Button
+          Height="100"
+          Command="{Binding SelectPage}"
+          CommandParameter="Charts"
+          Content="Live Chart"
+          CornerRadius="10"
+          FontSize="18" />
+      <Button
+          Height="100"
+          Command="{Binding SelectPage}"
+          CommandParameter="Inspection"
+          Content="Inspections"
+          CornerRadius="10"
+          FontSize="18" />
+    </StackPanel>
+
+    <TransitioningContentControl
+        Grid.Column="1"
+        BorderBrush="DarkGray"
+        BorderThickness="1,0,0,0"
+        Content="{Binding CurrentPage}" />
+  </DockPanel>
+</UserControl>

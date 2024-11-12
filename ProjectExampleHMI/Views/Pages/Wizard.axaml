@@ -1,0 +1,56 @@
+<UserControl
+    x:Class="ProjectExampleHMI.Views.WizardView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:ProjectExampleHMI.ViewModels"
+    d:DesignHeight="500"
+    d:DesignWidth="1000"
+    x:CompileBindings="True"
+    x:DataType="vm:WizardViewModel"
+    mc:Ignorable="d">
+  <Design.DataContext>
+    <vm:WizardViewModel />
+  </Design.DataContext>
+
+  <DockPanel Margin="20" LastChildFill="True">
+    <TextBlock
+        Height="50"
+        VerticalAlignment="Center"
+        DockPanel.Dock="Top"
+        FontSize="16"
+        Text="{Binding Message}"
+        TextAlignment="Center"
+        TextWrapping="Wrap" />
+    <DockPanel
+        Height="100"
+        Margin="20"
+        DockPanel.Dock="Bottom"
+        LastChildFill="False">
+      <Button
+          Width="200"
+          Command="{Binding PrevPage}"
+          Content="Previous"
+          CornerRadius="10"
+          DockPanel.Dock="Left"
+          FontSize="18"
+          IsEnabled="{Binding PrevEnabled}" />
+      <Button
+          Width="200"
+          Command="{Binding NextPage}"
+          Content="Next"
+          CornerRadius="10"
+          DockPanel.Dock="Right"
+          FontSize="18"
+          IsEnabled="{Binding NextEnabled}" />
+    </DockPanel>
+
+    <TransitioningContentControl
+        Grid.Column="1"
+        BorderBrush="DarkGray"
+        BorderThickness="1,1,1,1"
+        Content="{Binding CurrentPage}"
+        CornerRadius="20" />
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dt="using:CompanyName.UI.DataTemplates"
+                    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia">
+    <DataTemplate x:Key="ChartTemplate"
+                  DataType="{x:Type dt:Chart}">
+        <!-- Chart -->
+        <DockPanel MinHeight="500"
+                   DockPanel.Dock="Top"
+                   LastChildFill="True">
+            <DockPanel DockPanel.Dock="Top"
+                       LastChildFill="True">
+                <TextBlock Height="50"
+                           MinWidth="100"
+                           Margin="20"
+                           HorizontalAlignment="Center"
+                           DockPanel.Dock="Right"
+                           FontSize="24"
+                           Text="{Binding Path=Value, StringFormat={}{0:F2}}" />
+                <TextBlock Width="400"
+                           MinHeight="50"
+                           Padding="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Background="{Binding BackColor}"
+                           FontSize="24"
+                           Text="{Binding Name}"
+                           TextAlignment="Center" />
+            </DockPanel>
+            <lvc:CartesianChart MinHeight="300"
+                                DockPanel.Dock="Top"
+                                Sections="{Binding Sections}"
+                                Series="{Binding Series}"
+                                SyncContext="{Binding Sync}"
+                                XAxes="{Binding XAxes}"
+                                YAxes="{Binding YAxes}" />
+        </DockPanel>
+    </DataTemplate>
+</ResourceDictionary>

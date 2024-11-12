@@ -1,0 +1,124 @@
+<Window x:Class="ProjectExampleHMI.Windows.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:assets="clr-namespace:CompanyName.UI.Assets;assembly=CompanyName.UI"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:ProjectExampleHMI.ViewModels"
+        Title="CompanyName HMI"
+        d:DesignHeight="1080"
+        d:DesignWidth="1920"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="avares://CompanyName.UI/Assets/Logo.ico"
+        WindowStartupLocation="CenterOwner"
+        WindowState="FullScreen"
+        mc:Ignorable="d">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <DockPanel LastChildFill="True">
+        <DockPanel MaxHeight="100"
+                   DockPanel.Dock="Top">
+            <Image DockPanel.Dock="Left"
+                   Source="avares://CompanyName.UI/Assets/Logo.png" />
+            <Button Width="100"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="Exit"
+                    DockPanel.Dock="Right">
+                <StackPanel HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Image Width="32"
+                           Height="32"
+                           Source="avares://CompanyName.UI/Assets/shutdown_mo.png" />
+                    <TextBlock Margin="0,0,0,0"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button MinWidth="300"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="Login"
+                    DockPanel.Dock="Right">
+                <StackPanel HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="30">
+                    <TextBlock Margin="5,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Text="{Binding User}" />
+                    <Image Width="42"
+                           Height="42"
+                           Source="/Assets/img_user.png" />
+                </StackPanel>
+            </Button>
+            <Button Width="50"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{Binding ChangeCulture}"
+                    CommandParameter="de"
+                    Content="de"
+                    DockPanel.Dock="Right" />
+            <Button Width="50"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{Binding ChangeCulture}"
+                    CommandParameter="en"
+                    Content="en"
+                    DockPanel.Dock="Right" />
+            <TransitioningContentControl Content="{Binding Header}"
+                                         DockPanel.Dock="Left" />
+        </DockPanel>
+        <Grid DockPanel.Dock="Bottom"
+              ShowGridLines="False">
+            <StackPanel Height="100"
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                <Button Width="200"
+                        Command="{Binding SelectPage}"
+                        CommandParameter="Automation"
+                        Content="{x:Static assets:Resources.Automation}"
+                        CornerRadius="10"
+                        FontSize="18" />
+                <Button MinWidth="200"
+                        Command="{Binding SelectPage}"
+                        CommandParameter="System"
+                        Content="{x:Static assets:Resources.System}"
+                        CornerRadius="10"
+                        FontSize="18" />
+                <Button MinWidth="200"
+                        Command="{Binding SelectPage}"
+                        CommandParameter="Wizard"
+                        Content="Wizard"
+                        CornerRadius="10"
+                        FontSize="18" />
+            </StackPanel>
+            <StackPanel Height="100"
+                        Margin="10"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                <Button Width="200"
+                        Command="{Binding SelectPage}"
+                        CommandParameter="Devices"
+                        Content="{x:Static assets:Resources.Devices}"
+                        CornerRadius="10"
+                        FontSize="18" />
+                <Button Width="200"
+                        Command="{Binding SelectPage}"
+                        CommandParameter="Messages"
+                        Content="{x:Static assets:Resources.Messages}"
+                        CornerRadius="10"
+                        FontSize="18" />
+            </StackPanel>
+        </Grid>
+        <TransitioningContentControl Grid.Row="1"
+                                     BorderBrush="DarkGray"
+                                     BorderThickness="0,1,0,1"
+                                     Content="{Binding CurrentPage}" />
+    </DockPanel>
+</Window>

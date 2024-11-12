@@ -1,0 +1,65 @@
+<Window x:Class="CompanyName.UI.Windows.SplashScreen"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="500"
+        Height="500"
+        d:DesignHeight="500"
+        d:DesignWidth="500"
+        Background="Transparent"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="0"
+        ExtendClientAreaToDecorationsHint="True"
+        Topmost="True"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+    <Border Background="{StaticResource ThemeBackgroundBrush}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            CornerRadius="20">
+        <Panel Margin="10">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="10">
+                <TextBlock HorizontalAlignment="Center"
+                           FontSize="36"
+                           Text="CompanyName" />
+                <Image Width="250"
+                       Height="250"
+                       RenderOptions.BitmapInterpolationMode="HighQuality"
+                       Source="/Assets/Splash.png" />
+                <TextBlock Name="ApplicationName"
+                           HorizontalAlignment="Center"
+                           FontSize="24"
+                           Text="TBD" />
+                <ProgressBar Name="ProgressBar"
+                             Width="400"
+                             Height="15"
+                             Margin="0,0,0,0"
+                             Background="Transparent"
+                             BorderBrush="LightGray"
+                             BorderThickness="1" />
+                <DockPanel>
+                    <TextBlock Name="LoadingText"
+                               HorizontalAlignment="Left"
+                               DockPanel.Dock="Left"
+                               FontSize="16"
+                               Text="Loading... "
+                               TextWrapping="Wrap" />
+                    <TextBlock Name="Count"
+                               HorizontalAlignment="Right"
+                               DockPanel.Dock="Right"
+                               FontSize="16"
+                               Text="0 / 0" />
+                </DockPanel>
+                <TextBlock Name="ErrorText"
+                           HorizontalAlignment="Left"
+                           FontSize="12"
+                           Foreground="Tomato"
+                           Text=""
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Panel>
+    </Border>
+</Window>

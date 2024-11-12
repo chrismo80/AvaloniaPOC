@@ -1,0 +1,84 @@
+<Window x:Class="CompanyName.UI.Windows.NumPad"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        d:DesignHeight="500"
+        d:DesignWidth="1000"
+        Background="Transparent"
+        CanResize="False"
+        SizeToContent="WidthAndHeight"
+        SystemDecorations="None"
+        WindowStartupLocation="Manual"
+        mc:Ignorable="d">
+    <Border Name="Frame"
+            Background="{StaticResource ThemeBackgroundBrush}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            CornerRadius="20"
+            Opacity="0.8">
+        <DockPanel Margin="20"
+                   LastChildFill="True">
+            <DockPanel Width="80"
+                       Margin="10"
+                       DockPanel.Dock="Right"
+                       LastChildFill="True">
+                <Button Height="80"
+                        Margin="0,0,0,0"
+                        Click="Abort"
+                        CornerRadius="5"
+                        DockPanel.Dock="Top"
+                        FontSize="36"
+                        FontWeight="Bold">                    
+                    ✕
+                </Button>
+                <Button Height="80"
+                        Margin="0,20,0,0"
+                        Click="BackSpace"
+                        CornerRadius="5"
+                        DockPanel.Dock="Top"
+                        FontSize="36">                    
+                    ⌫
+                </Button>
+                <Button Height="80"
+                        Margin="0,190,0,0"
+                        Click="Done"
+                        CornerRadius="5"
+                        DockPanel.Dock="Bottom"
+                        FontSize="42">                    
+                    ⏎
+                </Button>
+            </DockPanel>
+            <StackPanel Margin="10"
+                        VerticalAlignment="Center"
+                        Spacing="10">
+                <TextBox Name="ResultTextBox"
+                         Height="80"
+                         Margin="0,0,0,10"
+                         VerticalAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         CornerRadius="5"
+                         FontSize="30"
+                         FontWeight="Bold"
+                         Text=""
+                         Watermark="" />
+                <StackPanel Name="Row1"
+                            Margin="0,0,0,0"
+                            Orientation="Horizontal"
+                            Spacing="10" />
+                <StackPanel Name="Row2"
+                            Margin="0,0,0,0"
+                            Orientation="Horizontal"
+                            Spacing="10" />
+                <StackPanel Name="Row3"
+                            Margin="0,0,0,0"
+                            Orientation="Horizontal"
+                            Spacing="10" />
+                <StackPanel Name="Row4"
+                            Margin="0,0,0,0"
+                            Orientation="Horizontal"
+                            Spacing="10" />
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</Window>

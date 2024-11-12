@@ -1,0 +1,39 @@
+<Window x:Class="CompanyName.UI.Windows.MessageBox"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="500"
+        Height="300"
+        d:DesignHeight="300"
+        d:DesignWidth="500"
+        Background="Transparent"
+        CanResize="False"
+        SizeToContent="Manual"
+        SystemDecorations="None"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+    <Border Background="{StaticResource ThemeBackgroundBrush}"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            CornerRadius="20">
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="50">
+            <TextBlock Name="Text"
+                       HorizontalAlignment="Center"
+                       FontSize="24" />
+            <StackPanel Name="Buttons"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="50">
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Margin"
+                                Value="10" />
+                    </Style>
+                </StackPanel.Styles>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

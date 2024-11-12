@@ -1,0 +1,99 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:dt="using:CompanyName.UI.DataTemplates">
+    <DataTemplate x:Key="ParameterMatchPairTemplate"
+                  DataType="{x:Type dt:ParameterMatchPair}">
+        <StackPanel Width="500">
+            <DockPanel LastChildFill="True">
+                <TextBlock VerticalAlignment="Center"
+                           DockPanel.Dock="Left"
+                           FontSize="24"
+                           Text="{Binding Name}"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap" />
+                <Image Height="32"
+                       Margin="5"
+                       DockPanel.Dock="Right"
+                       Source="{Binding Image}" />
+                <TextBlock Margin="10,0,10,0"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Right"
+                           FontSize="24"
+                           Text="{Binding Unit}"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap" />
+                <TextBlock VerticalAlignment="Center"
+                           FontSize="24"
+                           Text="{Binding Path=Value, StringFormat={}{0:F2}}"
+                           TextAlignment="Right"
+                           TextWrapping="Wrap" />
+            </DockPanel>
+            <DockPanel LastChildFill="True">
+                <TextBlock Width="100"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"
+                           FontSize="16"
+                           Text="{Binding Path=Min, StringFormat={}{0:F2}}"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap" />
+                <TextBlock Width="100"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Right"
+                           FontSize="16"
+                           Text="{Binding Path=Max, StringFormat={}{0:F2}}"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap" />
+                <Slider Grid.Row="1"
+                        VerticalAlignment="Center"
+                        IsEnabled="True"
+                        Maximum="{Binding DisplayMax}"
+                        Minimum="{Binding DisplayMin}"
+                        Value="{Binding Value}">
+                    <Slider.Styles>
+                        <Style Selector="Slider:horizontal">
+                            <Setter Property="Template">
+                                <ControlTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto"
+                                                           MinHeight="20" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <UniformGrid Grid.Row="1"
+                                                     Height="5"
+                                                     Columns="4">
+                                            <Rectangle Grid.Column="0"
+                                                       Fill="Maroon" />
+                                            <Rectangle Grid.Column="1"
+                                                       Fill="DarkOliveGreen" />
+                                            <Rectangle Grid.Column="2"
+                                                       Fill="DarkOliveGreen" />
+                                            <Rectangle Grid.Column="3"
+                                                       Fill="Maroon" />
+                                        </UniformGrid>
+                                        <Track Name="PART_Track"
+                                               Grid.Row="1"
+                                               Orientation="Horizontal">
+                                            <Thumb Name="thumb"
+                                                   MinWidth="20"
+                                                   MinHeight="20">
+                                                <Thumb.Template>
+                                                    <ControlTemplate>
+                                                        <Ellipse Width="5"
+                                                                 Height="30"
+                                                                 Fill="Goldenrod" />
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+                                        </Track>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter>
+                        </Style>
+                    </Slider.Styles>
+                </Slider>
+            </DockPanel>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>
