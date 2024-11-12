@@ -21,11 +21,12 @@ public class AuthManager : Manager, IAuthManager
 
 	public bool Logout()
 	{
-		var success = User != "";
+		if (User == "")
+			return false;
 
 		User = "";
 		UserChanged?.Invoke(this, User);
 
-		return success;
+		return true;
 	}
 }

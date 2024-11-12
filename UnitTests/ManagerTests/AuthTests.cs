@@ -17,28 +17,41 @@ public class AuthTests : ManagerTests<AuthManager>
 	[TestMethod]
 	public void Login_WrongPassword_NotLoggedIn()
 	{
-		_sut.Login(USER_NAME, WRONG_PASSWORD);
+		var success = _sut.Login(USER_NAME, WRONG_PASSWORD);
 
+		Assert.IsFalse(success);
 		Assert.AreEqual("", _sut.User);
 	}
 
 	[TestMethod]
 	public void Login_CorrectPassword_LoggedIn()
 	{
-		_sut.Login(USER_NAME, CORRECT_PASSWORD);
+		var success = _sut.Login(USER_NAME, CORRECT_PASSWORD);
 
+		Assert.IsTrue(success);
 		Assert.AreEqual(USER_NAME, _sut.User);
 	}
 
 	[TestMethod]
 	public void Logout_AfterLogin_LoggedOut()
 	{
-		_sut.Login(USER_NAME, CORRECT_PASSWORD);
+		var success = _sut.Login(USER_NAME, CORRECT_PASSWORD);
 
+		Assert.IsTrue(success);
 		Assert.AreEqual(USER_NAME, _sut.User);
 
-		_sut.Logout();
+		success = _sut.Logout();
 
+		Assert.IsTrue(success);
+		Assert.AreEqual("", _sut.User);
+	}
+
+	[TestMethod]
+	public void Logout_WithoutLogin_NoException()
+	{
+		var success = _sut.Logout();
+
+		Assert.IsFalse(success);
 		Assert.AreEqual("", _sut.User);
 	}
 }
