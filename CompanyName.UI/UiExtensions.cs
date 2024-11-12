@@ -24,13 +24,9 @@ public static class UiExtensions
     /// <summary>
     /// Initialises a main window of the type <typeparamref name="TWindow" /><br/>
     /// Attaches a new instance of <typeparamref name="TViewModel" /> to the data context of that window<br/>
-    /// Starts a splash screen and initialises the service provider with the service collection setup<br/>
+    /// Starts a splash screen and initialises the service provider with the service collection setup delegate<br/>
     /// Opens the main window after service initialisation was successful
     /// </summary>
-    /// <typeparam name="TWindow">Type of the main window</typeparam>
-    /// <typeparam name="TViewModel">Type of the view model of the main window</typeparam>
-    /// <param name="desktop">Dekstop object the main window to attach to</param>
-    /// <param name="setupCollection">Delegate for the service collection setup during splash screen init</param>
     public static async void StartWithSplashScreen<TWindow, TViewModel>(
         this IClassicDesktopStyleApplicationLifetime desktop, Func<IServiceCollection> setupCollection)
         where TWindow : Window
@@ -70,8 +66,6 @@ public static class UiExtensions
     /// <summary>
     /// Reloads the whole main window
     /// </summary>
-    /// <param name="desktop">the desktop that holds the current main window</param>
-    /// <param name="provider">the service provider to get the main window from</param>
     public static async void ReloadMainWindow(this IClassicDesktopStyleApplicationLifetime desktop, IServiceProvider provider)
     {
         if (desktop.MainWindow is not Window currentWindow)
@@ -91,7 +85,6 @@ public static class UiExtensions
     /// <summary>
     /// Sets ui culture on current thread and ui thread
     /// </summary>
-    /// <param name="culture">culture to set</param>
     public static void SetCulture(this string culture)
     {
         // Check if different lanugage than current
@@ -113,9 +106,6 @@ public static class UiExtensions
     /// <summary>
     /// Fall back access to IConfiguration, if ctor DI not possible
     /// </summary>
-    /// <param name="me">object for extension</param>
-    /// <param name="setting">the setting full name to get</param>
-    /// <returns>the value from IConfiguration</returns>
     internal static T? GetSetting<T>(this object me, string setting) =>
         _configuration?[setting] is string value ? (T)Convert.ChangeType(value, typeof(T)) : default;
 
@@ -123,7 +113,6 @@ public static class UiExtensions
     /// opens a virtual keyboard<br/>
     /// if text box is embedded into a numeric updown control, then a virtual numpad is opened
     /// </summary>
-    /// <param name="textBox">the source textbox control where the input should be written to</param>
     internal static async void ShowVirtualInputControl(this TextBox textBox)
     {
         if (textBox.FindAncestorOfType<NumericUpDown>() is NumericUpDown numericUpDown)
@@ -144,11 +133,9 @@ public static class UiExtensions
     /// <summary>
     /// Adds the default services to the service collection, such as view models, windows and service provider itself
     /// </summary>
-    /// <param name="collection">the collection ot modify</param>
-    /// <returns>the modified collection</returns>
     internal static IServiceCollection AddDefaultServices(this IServiceCollection collection) => collection
 
-        // add all viewmodels and windows of CompanyName.UI (for standard view models / windows)
+        // add all view models and windows of CompanyName.UI (for standard view models / windows)
         .AddTransients<BaseViewModel>(Assembly.GetExecutingAssembly())
         .AddTransients<BaseWindow>(Assembly.GetExecutingAssembly())
 
@@ -156,6 +143,6 @@ public static class UiExtensions
         .AddTransients<BaseViewModel>(Assembly.GetEntryAssembly()!)
         .AddTransients<BaseWindow>(Assembly.GetEntryAssembly()!)
 
-        // add service provider itself to enable the extension IServiceProvider.New<T>(params objcet[] parameters)
+        // add service provider itself to enable the extension IServiceProvider.New<T>(params object[] parameters)
         .AddSingleton(serviceProvider => serviceProvider);
 }
