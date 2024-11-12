@@ -14,12 +14,12 @@ public static class TraceExtensions
         _logger = logger;
 
     public static void Trace(this object me, string text, LogLevel level = LogLevel.Information) =>
-        _logger?.Log(me.FormateMessage(text), level);
+        _logger?.Log(me.FormatMessage(text), level);
 
     public static void Trace(this object me, Exception ex) =>
         me.Trace(ex.ToString(), LogLevel.Error);
 
-    private static string FormateMessage(this object me, string text) =>
+    private static string FormatMessage(this object me, string text) =>
         GetTypeText(me.GetType().FullName ?? "") + ":\t" + text;
 
     private static string GetTypeText(string type = "") =>

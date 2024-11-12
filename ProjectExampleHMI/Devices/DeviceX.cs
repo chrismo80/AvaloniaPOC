@@ -1,7 +1,6 @@
 ﻿using System;
 
 using CompanyName.Core.Devices;
-using CompanyName.Core.Logging;
 using CompanyName.Core.Messages;
 
 namespace ProjectExampleHMI.Devices;
@@ -31,8 +30,6 @@ public abstract class DeviceX(int id, string name, double value) : IDevice
         var newValue = _random.NextDouble() - 0.5 + _lastValue;
 
         _lastValue = newValue;
-
-        //this.Trace(Name + " sent new value: " + _lastValue, LogLevel.Debug);
 
         return newValue;
     }

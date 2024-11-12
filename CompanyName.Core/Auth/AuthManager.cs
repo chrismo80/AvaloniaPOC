@@ -8,7 +8,7 @@ public class AuthManager : Manager, IAuthManager
 
     public bool Login(string user, string password)
     {
-        var success = user != "" && password != "" && user!.Length == password!.Length;
+        var success = user != "" && password != "" && user.Length == password.Length;
 
         if (success)
         {

@@ -1,6 +1,4 @@
-﻿using CompanyName.Core.Messages;
-
-namespace CompanyName.Core.Auth;
+﻿namespace CompanyName.Core.Auth;
 
 public interface IAuthManager
 {

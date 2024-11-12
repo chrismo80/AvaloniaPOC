@@ -41,11 +41,13 @@ public partial class MessageBox : Window
 
         void AddButton(string caption, MessageBoxResult dialogResult, bool def = false)
         {
-            var button = new Button { Content = caption };
-
-            button.MinHeight = 50;
-            button.MinWidth = 100;
-            button.FontSize = 18;
+            var button = new Button
+            {
+                Content = caption,
+                MinHeight = 50,
+                MinWidth = 100,
+                FontSize = 18
+            };
 
             button.Click += (_, _) =>
             {
@@ -74,11 +76,8 @@ public partial class MessageBox : Window
         var tcs = new TaskCompletionSource<MessageBoxResult>();
 
         dialog.Closed += delegate { tcs.TrySetResult(result); };
-
-        if (parent != null)
-            dialog.ShowDialog(parent);
-        else
-            dialog.Show();
+        
+        dialog.ShowDialog(parent);
 
         return tcs.Task;
     }

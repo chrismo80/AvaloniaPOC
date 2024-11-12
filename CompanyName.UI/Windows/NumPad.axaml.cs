@@ -139,7 +139,7 @@ public partial class NumPad : Window
         panel.Children.Clear();
 
         foreach (var character in characters)
-            panel!.Children.Add(CreateButton(character));
+            panel.Children.Add(CreateButton(character));
     }
 
     private Button CreateButton(char text)
@@ -153,7 +153,7 @@ public partial class NumPad : Window
             FontSize = 24
         };
 
-        button.Click += (sender, args) => AddCharacter(sender, args);
+        button.Click += AddCharacter;
 
         return button;
     }

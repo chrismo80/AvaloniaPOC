@@ -26,11 +26,8 @@ public partial class UserLoginDialog : BaseWindow
         Title = title;
 
         this.FindControl<Label>("Message")!.Content = "";
-
-        if (parent != null)
-            ShowDialog(parent);
-        else
-            Show();
+        
+        ShowDialog(parent);
 
         this.FindControl<TextBox>("UserName")!.Focus();
     }

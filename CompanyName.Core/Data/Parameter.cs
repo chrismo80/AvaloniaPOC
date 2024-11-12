@@ -40,7 +40,7 @@ public class Parameter
         (Description, Unit) = (description, unit);
         (Min, Target, Max) = (min, target, max);
 
-        if (new string[] { operation, product, category, name }.Any(string.IsNullOrEmpty))
+        if (new[] { operation, product, category, name }.Any(string.IsNullOrEmpty))
             throw new ArgumentException($"Not all key defined ({operation}, {product}, {category}, {name})!");
     }
 }

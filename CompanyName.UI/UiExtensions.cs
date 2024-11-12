@@ -72,7 +72,7 @@ public static class UiExtensions
             return;
 
         // get new instance of same window (transient service)
-        var newWindow = (Window)provider!.GetRequiredService(currentWindow.GetType());
+        var newWindow = (Window)provider.GetRequiredService(currentWindow.GetType());
         newWindow.DataContext = currentWindow.DataContext;
         desktop.MainWindow = newWindow;
 

@@ -40,14 +40,14 @@ public partial class SplashScreen : Window
         var serviceProvider = serviceCollection.AddDefaultServices().BuildServiceProvider();
 
         var services = serviceCollection
-            .Where(item => item.Lifetime == ServiceLifetime.Singleton && !item.ServiceType.IsInterface)
+            .Where(item => item is { Lifetime: ServiceLifetime.Singleton, ServiceType.IsInterface: false })
             .ToList();
 
         for (int i = 1; i <= services.Count; i++)
         {
             Dispatcher.UIThread.Invoke(() =>
             {
-                LoadingText.Text = Assets.Resources.Loading + "... " + services[i - 1].ServiceType?.Name;
+                LoadingText.Text = Assets.Resources.Loading + "... " + services[i - 1].ServiceType.Name;
                 Count.Text = i + " / " + services.Count;
             });
 

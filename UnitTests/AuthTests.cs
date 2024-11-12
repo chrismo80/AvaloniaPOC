@@ -1,5 +1,4 @@
 using CompanyName.Core.Auth;
-using CompanyName.Core.Messages;
 
 namespace UnitTests;
 
