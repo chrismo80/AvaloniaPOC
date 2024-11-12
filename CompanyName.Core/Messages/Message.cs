@@ -2,17 +2,17 @@
 
 public enum MessageType
 {
-    Information,
-    Warning,
-    Error,
+	Information,
+	Warning,
+	Error
 }
 
-public class Message
+public record Message
 {
-    public DateTime Created = DateTime.Now;
-    public MessageType Type;
-    public string Text = "";
-    public int Id;
+	public DateTime Created = DateTime.Now;
+	public int Id;
+	public string Text = "";
+	public MessageType Type;
 
-    public override string ToString() => $"{Created}: {Text} ({Type})";
+	public override string ToString() => $"{Created}: {Text} ({Type})";
 }
