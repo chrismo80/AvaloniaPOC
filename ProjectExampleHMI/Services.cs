@@ -8,7 +8,7 @@ namespace ProjectExampleHMI;
 
 internal static class Services
 {
-    static readonly string _platform = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "mac" : "win";
+    static readonly string _platform = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win" : "mac";
     
     internal static IServiceCollection Setup() => new ServiceCollection()
 
