@@ -2,8 +2,8 @@
 
 public partial class Page3ViewModel : CompanyName.UI.ViewModels.PageViewModel
 {
-    public Page3ViewModel()
-    {
-        Message = "Page 3 / 3";
-    }
+	public Page3ViewModel()
+	{
+		Message = "Page 3 / 3";
+	}
 }

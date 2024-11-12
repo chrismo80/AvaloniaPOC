@@ -2,8 +2,8 @@
 
 public partial class HeaderViewModel : CompanyName.UI.ViewModels.PageViewModel
 {
-    public HeaderViewModel()
-    {
-        Message = "This is the Header";
-    }
+	public HeaderViewModel()
+	{
+		Message = "This is the Header";
+	}
 }

@@ -2,5 +2,5 @@
 
 public interface IExecutable
 {
-    Task Execute();
+	Task Execute();
 }

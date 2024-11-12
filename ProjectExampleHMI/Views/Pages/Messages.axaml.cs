@@ -4,8 +4,8 @@ namespace ProjectExampleHMI.Views;
 
 public partial class MessagesView : UserControl
 {
-    public MessagesView()
-    {
-        InitializeComponent();
-    }
+	public MessagesView()
+	{
+		InitializeComponent();
+	}
 }

@@ -2,11 +2,11 @@
 
 public interface IAuthManager
 {
-    event EventHandler<string> UserChanged;
+	event EventHandler<string> UserChanged;
 
-    public string User { get; }
+	public string User { get; }
 
-    public bool Login(string user, string password);
+	public bool Login(string user, string password);
 
-    public bool Logout();
+	public bool Logout();
 }

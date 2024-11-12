@@ -1,5 +1,4 @@
 ﻿using CompanyName.UI.Devices;
-
 using ProjectExampleHMI.Models;
 
 namespace ProjectExampleHMI.Devices;

@@ -4,8 +4,8 @@ namespace ProjectExampleHMI.Views;
 
 public partial class SystemView : UserControl
 {
-    public SystemView()
-    {
-        InitializeComponent();
-    }
+	public SystemView()
+	{
+		InitializeComponent();
+	}
 }

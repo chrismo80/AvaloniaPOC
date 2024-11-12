@@ -4,8 +4,8 @@ namespace ProjectExampleHMI.Views;
 
 public partial class WizardView : UserControl
 {
-    public WizardView()
-    {
-        InitializeComponent();
-    }
+	public WizardView()
+	{
+		InitializeComponent();
+	}
 }

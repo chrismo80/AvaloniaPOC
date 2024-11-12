@@ -2,15 +2,15 @@
 
 public enum LogLevel
 {
-    Trace,
-    Debug,
-    Information,
-    Warning,
-    Error,
-    Critical,
+	Trace,
+	Debug,
+	Information,
+	Warning,
+	Error,
+	Critical,
 }
 
 public interface ILogger
 {
-    public Task Log(string text, LogLevel level = LogLevel.Debug);
+	public Task Log(string text, LogLevel level = LogLevel.Debug);
 }

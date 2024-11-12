@@ -7,31 +7,31 @@ namespace CompanyName.UI.Extensions;
 
 public static class ImageExtensions
 {
-    public static Bitmap? ToBitmap(this System.Drawing.Bitmap? source)
-    {
-        if (source == null)
-            return null;
+	public static Bitmap? ToBitmap(this System.Drawing.Bitmap? source)
+	{
+		if (source == null)
+			return null;
 
-        using var stream = new MemoryStream();
+		using var stream = new MemoryStream();
 
-        source?.Save(stream, ImageFormat.Png);
+		source?.Save(stream, ImageFormat.Png);
 
-        stream.Position = 0;
+		stream.Position = 0;
 
-        return new Bitmap(stream);
-    }
+		return new Bitmap(stream);
+	}
 
-    public static System.Drawing.Bitmap? ToBitmap(this Bitmap? source)
-    {
-        if (source == null)
-            return null;
+	public static System.Drawing.Bitmap? ToBitmap(this Bitmap? source)
+	{
+		if (source == null)
+			return null;
 
-        using var stream = new MemoryStream();
+		using var stream = new MemoryStream();
 
-        source?.Save(stream);
+		source?.Save(stream);
 
-        stream.Position = 0;
+		stream.Position = 0;
 
-        return new System.Drawing.Bitmap(stream);
-    }
+		return new System.Drawing.Bitmap(stream);
+	}
 }

@@ -4,25 +4,25 @@ namespace CompanyName.Core;
 
 public class Manager : IDisposable
 {
-    private bool _disposed;
+	private bool _disposed;
 
-    public Manager()
-    {
-        this.Trace("Ctor");
-        Task.Delay(200).Wait();
-    }
+	public Manager()
+	{
+		this.Trace("Ctor");
+		Task.Delay(200).Wait();
+	}
 
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
+	public void Dispose()
+	{
+		if (_disposed)
+			return;
 
-        OnDisposing();
+		OnDisposing();
 
-        GC.SuppressFinalize(this);
+		GC.SuppressFinalize(this);
 
-        _disposed = true;
-    }
+		_disposed = true;
+	}
 
-    protected virtual void OnDisposing() => this.Trace("Disposing");
+	protected virtual void OnDisposing() => this.Trace("Disposing");
 }

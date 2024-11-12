@@ -2,30 +2,30 @@
 
 public class AuthManager : Manager, IAuthManager
 {
-    public event EventHandler<string>? UserChanged;
+	public event EventHandler<string>? UserChanged;
 
-    public string User { get; private set; } = "";
+	public string User { get; private set; } = "";
 
-    public bool Login(string user, string password)
-    {
-        var success = user != "" && password != "" && user.Length == password.Length;
+	public bool Login(string user, string password)
+	{
+		var success = user != "" && password != "" && user.Length == password.Length;
 
-        if (!success)
-            return success;
-        
-        User = user;
-        UserChanged?.Invoke(this, User);
+		if (!success)
+			return success;
 
-        return success;
-    }
+		User = user;
+		UserChanged?.Invoke(this, User);
 
-    public bool Logout()
-    {
-        var success = User != "";
+		return success;
+	}
 
-        User = "";
-        UserChanged?.Invoke(this, User);
+	public bool Logout()
+	{
+		var success = User != "";
 
-        return success;
-    }
+		User = "";
+		UserChanged?.Invoke(this, User);
+
+		return success;
+	}
 }

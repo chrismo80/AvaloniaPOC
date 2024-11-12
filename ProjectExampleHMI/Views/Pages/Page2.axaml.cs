@@ -4,8 +4,8 @@ namespace ProjectExampleHMI.Views;
 
 public partial class Page2View : UserControl
 {
-    public Page2View()
-    {
-        InitializeComponent();
-    }
+	public Page2View()
+	{
+		InitializeComponent();
+	}
 }

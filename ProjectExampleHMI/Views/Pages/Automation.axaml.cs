@@ -4,8 +4,8 @@ namespace ProjectExampleHMI.Views;
 
 public partial class AutomationView : UserControl
 {
-    public AutomationView()
-    {
-        InitializeComponent();
-    }
+	public AutomationView()
+	{
+		InitializeComponent();
+	}
 }
