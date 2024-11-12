@@ -69,12 +69,12 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
 
     private void ReadActiveMessages()
     {
-        ActiveMessages = new ObservableCollection<ObservableMessage>(_messageManager?.GetActiveMessages().Select(m => new ObservableMessage(m)) ?? []);
+        ActiveMessages = new ObservableCollection<ObservableMessage>(_messageManager?.ActiveMessages.Select(m => new ObservableMessage(m)) ?? []);
     }
 
     private void ReadArchivedMessages()
     {
-        ArchivedMessages = new ObservableCollection<ObservableMessage>(_messageArchive?.GetArchivedMessages().Select(m => new ObservableMessage(m)) ?? []);
+        ArchivedMessages = new ObservableCollection<ObservableMessage>(_messageArchive?.ArchivedMessages.Select(m => new ObservableMessage(m)) ?? []);
     }
 }
 

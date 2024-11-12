@@ -8,5 +8,5 @@ public interface IMessageManager
 
     public void Confirm(Message message);
 
-    public List<Message> GetActiveMessages();
+    public List<Message> ActiveMessages { get; }
 }

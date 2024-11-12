@@ -2,7 +2,7 @@
 
 public interface IMessageArchive
 {
-    public List<Message> GetArchivedMessages();
+    public List<Message> ArchivedMessages { get; }
 
     public void Archive(Message message);
 }
