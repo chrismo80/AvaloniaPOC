@@ -11,10 +11,12 @@ public partial class Axis : ObservableObject
 		new SolidColorBrush(Colors.Maroon, 0.6),
 	];
 
-	[ObservableProperty] [NotifyPropertyChangedFor(nameof(BackColor))]
+	[ObservableProperty]
+	[NotifyPropertyChangedFor(nameof(BackColor))]
 	string _state = "";
 
-	[ObservableProperty] double _position;
+	[ObservableProperty]
+	double _position;
 
 	public string Name { get; } = "";
 

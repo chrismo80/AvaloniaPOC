@@ -9,9 +9,11 @@ namespace ProjectExampleHMI.ViewModels;
 
 public partial class SystemInspectionViewModel : CompanyName.UI.ViewModels.PageViewModel
 {
-	[ObservableProperty] ObservableCollection<InspectionModel> _models = [];
+	[ObservableProperty]
+	ObservableCollection<InspectionModel> _models = [];
 
-	[ObservableProperty] ObservableCollection<SyncDevice> _extSyncs = [];
+	[ObservableProperty]
+	ObservableCollection<SyncDevice> _extSyncs = [];
 
 	public SystemInspectionViewModel()
 	{

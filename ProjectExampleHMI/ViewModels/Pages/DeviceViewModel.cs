@@ -8,9 +8,11 @@ namespace ProjectExampleHMI.ViewModels;
 
 public partial class DeviceViewModel : CompanyName.UI.ViewModels.PageViewModel
 {
-	[ObservableProperty] ObservableCollection<BaseDevice> _devices = [];
+	[ObservableProperty]
+	ObservableCollection<BaseDevice> _devices = [];
 
-	[ObservableProperty] int _selectedIndex;
+	[ObservableProperty]
+	int _selectedIndex;
 
 	public DeviceViewModel()
 	{

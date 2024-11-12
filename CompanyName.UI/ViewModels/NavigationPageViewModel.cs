@@ -8,11 +8,14 @@ public abstract partial class NavigationPageViewModel : PageViewModel
 
 	int _index;
 
-	[ObservableProperty] PageViewModel? _currentPage;
+	[ObservableProperty]
+	PageViewModel? _currentPage;
 
-	[ObservableProperty] bool _prevEnabled;
+	[ObservableProperty]
+	bool _prevEnabled;
 
-	[ObservableProperty] bool _nextEnabled;
+	[ObservableProperty]
+	bool _nextEnabled;
 
 	protected NavigationPageViewModel(params PageViewModel[] pages)
 	{

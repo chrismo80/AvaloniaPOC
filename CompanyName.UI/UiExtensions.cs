@@ -116,7 +116,7 @@ public static class UiExtensions
 			// text box is embedded into a numeric updown -> numbers
 			var input = await NumPad.Show(numericUpDown.GetVisualRoot() as Window, "Type!", numericUpDown.Value.ToString()!);
 
-			if (decimal.TryParse(input, out decimal value))
+			if (decimal.TryParse(input, out var value))
 				numericUpDown.Value = value;
 		}
 		else

@@ -11,7 +11,8 @@ public partial class MainWindowViewModel : CompanyName.UI.ViewModels.NavigationP
 	readonly IServiceProvider? _serviceProvider;
 	readonly IAuthManager? _authManager;
 
-	[ObservableProperty] HeaderViewModel? _header;
+	[ObservableProperty]
+	HeaderViewModel? _header;
 
 	public string User => _authManager?.User ?? "";
 

@@ -9,7 +9,8 @@ namespace ProjectExampleHMI.ViewModels;
 
 public partial class SystemOverviewViewModel : CompanyName.UI.ViewModels.PageViewModel
 {
-	[ObservableProperty] Avalonia.Media.Imaging.Bitmap? _someBitmap;
+	[ObservableProperty]
+	Avalonia.Media.Imaging.Bitmap? _someBitmap;
 
 	public ObservableCollection<CompanyName.UI.DataTemplates.ParameterMatchPair> Measurements { get; private set; } = [];
 

@@ -21,7 +21,8 @@ public partial class Chart : ObservableObject
 
 	readonly int _offset;
 
-	[ObservableProperty] [NotifyPropertyChangedFor(nameof(BackColor))]
+	[ObservableProperty]
+	[NotifyPropertyChangedFor(nameof(BackColor))]
 	double _value;
 
 	public ObservableCollection<ISeries> Series { get; set; } = [];
@@ -182,7 +183,7 @@ public partial class Chart : ObservableObject
 		for (int i = -1 * Duration; i <= 0; i += 5)
 			separators.Add(now.AddSeconds(i).Ticks);
 
-		return [.. separators];
+		return separators.ToArray();
 	}
 
 	private IBrush GetStateColor() => OutOfRange switch

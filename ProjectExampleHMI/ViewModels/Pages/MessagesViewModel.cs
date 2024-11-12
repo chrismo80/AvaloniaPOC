@@ -11,15 +11,20 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
 	readonly IMessageManager? _messageManager;
 	readonly IMessageArchive? _messageArchive;
 
-	[ObservableProperty] ObservableCollection<ObservableMessage> _activeMessages = [];
+	[ObservableProperty]
+	ObservableCollection<ObservableMessage> _activeMessages = [];
 
-	[ObservableProperty] int _selectedIndex;
+	[ObservableProperty]
+	int _selectedIndex;
 
-	[ObservableProperty] ObservableCollection<ObservableMessage> _archivedMessages = [];
+	[ObservableProperty]
+	ObservableCollection<ObservableMessage> _archivedMessages = [];
 
-	[ObservableProperty] int _selectedArchivedIndex;
+	[ObservableProperty]
+	int _selectedArchivedIndex;
 
-	[ObservableProperty] string _message = "This is the Messages ViewModel";
+	[ObservableProperty]
+	string _message = "This is the Messages ViewModel";
 
 	public MessagesViewModel()
 	{
@@ -73,13 +78,17 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
 
 public partial class ObservableMessage : ObservableObject
 {
-	[ObservableProperty] private DateTime _created;
+	[ObservableProperty]
+	private DateTime _created;
 
-	[ObservableProperty] private string _text = "";
+	[ObservableProperty]
+	private string _text = "";
 
-	[ObservableProperty] private int _id;
+	[ObservableProperty]
+	private int _id;
 
-	[ObservableProperty] private string _type;
+	[ObservableProperty]
+	private string _type;
 
 	public Message Message { get; }
 
