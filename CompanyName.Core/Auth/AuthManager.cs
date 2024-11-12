@@ -10,11 +10,11 @@ public class AuthManager : Manager, IAuthManager
     {
         var success = user != "" && password != "" && user.Length == password.Length;
 
-        if (success)
-        {
-            User = user;
-            UserChanged?.Invoke(this, User);
-        }
+        if (!success)
+            return success;
+        
+        User = user;
+        UserChanged?.Invoke(this, User);
 
         return success;
     }

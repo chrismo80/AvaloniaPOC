@@ -116,5 +116,6 @@ public static class ServiceExtensions
         return collection;
     }
 
-    private static bool Implements<T>(this Type t) => t.IsClass && !t.IsAbstract && t.IsAssignableTo(typeof(T));
+    private static bool Implements<T>(this Type t) =>
+        t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(T));
 }

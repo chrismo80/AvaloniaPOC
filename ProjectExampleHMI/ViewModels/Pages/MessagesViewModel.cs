@@ -33,7 +33,7 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
         Name = "Messages";
 
         ActiveMessages = new ObservableCollection<ObservableMessage>(Enumerable.Range(1, 3)
-            .Select(i => new ObservableMessage(new Message() { Id = i, Text = "Dummy", Type = MessageType.Warning })) ?? []);
+            .Select(i => new ObservableMessage(new Message() { Id = i, Text = "Dummy", Type = MessageType.Warning })));
     }
 
     public MessagesViewModel(IMessageManager messageManager, IMessageArchive messageArchive)

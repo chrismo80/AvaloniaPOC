@@ -45,10 +45,12 @@ public partial class SplashScreen : Window
 
         for (int i = 1; i <= services.Count; i++)
         {
+            int index = i;
+            
             Dispatcher.UIThread.Invoke(() =>
             {
-                LoadingText.Text = Assets.Resources.Loading + "... " + services[i - 1].ServiceType.Name;
-                Count.Text = i + " / " + services.Count;
+                LoadingText.Text = Assets.Resources.Loading + "... " + services[index - 1].ServiceType.Name;
+                Count.Text = index + " / " + services.Count;
             });
 
             // let service provider call service ctors to check if all are ready
