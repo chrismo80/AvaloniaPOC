@@ -4,39 +4,44 @@ namespace CompanyName.Core.Logging;
 
 public class FileLogger : ILogger
 {
-	readonly string _directory;
-	readonly string _extension;
-	readonly string _sessionStarted;
+	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	readonly LogLevel _logLevel = LogLevel.Debug;
 	readonly SemaphoreSlim _fileLock = new(1, 1);
 
-	readonly int _maxEntriesPerFile = 100_000;
-
 	int _entriesCounter;
-	string _currentFileName;
+
+	public string LogDirectory { get; } = "Logs";
+	public string Extension { get; private set; } = ".log";
+	public string CurrentFileName { get; private set; } = "";
+
+	public LogLevel LogLevel { get; set; } = LogLevel.Debug;
+	public int MaxEntriesPerFile { get; set; } = 100_000;
+
+	public FileLogger()
+	{
+		Init();
+	}
 
 	public FileLogger(IConfiguration configuration)
 	{
 		var config = configuration.GetSection("Logging");
 
 		var fileConfig = config["File:Path"]!;
-		_ = Enum.TryParse(config["LogLevel:Default"]!, out _logLevel);
-		_ = int.TryParse(config["File:MaxEntriesPerFile"]!, out _maxEntriesPerFile);
+		_ = Enum.TryParse(config["LogLevel:Default"]!, out LogLevel logLevel);
+		_ = int.TryParse(config["File:MaxEntriesPerFile"]!, out int maxEntriesPerFile);
 
-		_directory = Path.GetDirectoryName(fileConfig)!;
-		_extension = Path.GetExtension(fileConfig);
+		LogLevel = logLevel;
+		MaxEntriesPerFile = maxEntriesPerFile;
 
-		Directory.CreateDirectory(_directory);
+		LogDirectory = Path.GetDirectoryName(fileConfig)!;
+		Extension = Path.GetExtension(fileConfig);
 
-		_sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-
-		_currentFileName = GetNextFileName();
+		Init();
 	}
 
 	public async Task Log(string text, LogLevel level = LogLevel.Debug)
 	{
-		if (level < _logLevel)
+		if (level < LogLevel)
 			return;
 
 		string category = level.ToString().PadRight(12);
@@ -48,15 +53,15 @@ public class FileLogger : ILogger
 	{
 		await _fileLock.WaitAsync().ConfigureAwait(false);
 
-		if (++_entriesCounter >= _maxEntriesPerFile)
+		if (++_entriesCounter >= MaxEntriesPerFile)
 		{
-			_currentFileName = GetNextFileName();
+			CurrentFileName = GetNextFileName();
 			_entriesCounter = 0;
 		}
 
 		try
 		{
-			await File.AppendAllTextAsync(_currentFileName, line).ConfigureAwait(false);
+			await File.AppendAllTextAsync(CurrentFileName, line).ConfigureAwait(false);
 		}
 		finally
 		{
@@ -66,7 +71,7 @@ public class FileLogger : ILogger
 
 	private string GetNextFileName()
 	{
-		var fileName = Path.Combine(_directory, _sessionStarted + _extension);
+		var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
 
 		if (!File.Exists(fileName))
 			return fileName;
@@ -74,8 +79,15 @@ public class FileLogger : ILogger
 		int i = 1;
 
 		while (File.Exists(fileName))
-			fileName = Path.Combine(_directory, _sessionStarted + $".{i++}" + _extension);
+			fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
 
 		return fileName;
+	}
+
+	private void Init()
+	{
+		Directory.CreateDirectory(LogDirectory);
+
+		CurrentFileName = GetNextFileName();
 	}
 }
