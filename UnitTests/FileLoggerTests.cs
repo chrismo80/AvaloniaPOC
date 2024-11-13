@@ -39,7 +39,7 @@ public class FileLoggerTests
 		_sut.Log("Last Entry").Wait();
 
 		// Assert
-		var result = Count();
+		var result = CountFilesAndEntries();
 
 		Assert.AreEqual(files, result.Files);
 		Assert.AreEqual(entries, result.Entries);
@@ -52,31 +52,32 @@ public class FileLoggerTests
 	{
 		_sut.MaxEntriesPerFile = maxEntries;
 
-		// A single trigger for all tasks to start simultaneously
-		var startTrigger = new TaskCompletionSource();
+		// A trigger for all tasks to start simultaneously
+		var trigger = new TaskCompletionSource();
+
+		async Task LogWhenTriggered(Task go, int i)
+		{
+			// Wait for the trigger to start
+			await go;
+			await _sut.Log("Entry " + i);
+		}
 
 		var tasks = Enumerable.Range(1, entries)
-			.Select(i => RunWhenTriggered(startTrigger.Task, i));
+			.Select(i => LogWhenTriggered(trigger.Task, i));
 
-		// Set Trigger
-		startTrigger.SetResult();
+		// Set trigger
+		trigger.SetResult();
 
 		// Wait for all tasks to be finished
 		Task.WhenAll(tasks).Wait();
 
-		var result = Count();
+		var result = CountFilesAndEntries();
 
 		Assert.AreEqual(files, result.Files);
 		Assert.AreEqual(entries, result.Entries);
 	}
 
-	private async Task RunWhenTriggered(Task trigger, int i)
-	{
-		await trigger; // Wait for the signal to start
-		await _sut.Log("Entry " + i);
-	}
-
-	private (int Files, int Entries) Count()
+	private (int Files, int Entries) CountFilesAndEntries()
 	{
 		var files = Directory.GetFiles(_sut.LogDirectory);
 
