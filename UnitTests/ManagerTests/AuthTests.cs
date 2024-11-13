@@ -15,6 +15,33 @@ public class AuthTests : ManagerTests<AuthManager>
 	}
 
 	[TestMethod]
+	public void Login_NoUserNoPassword_NotLoggedIn()
+	{
+		var success = Sut.Login("", "");
+
+		Assert.IsFalse(success);
+		Assert.AreEqual("", Sut.User);
+	}
+
+	[TestMethod]
+	public void Login_NoUserButPassword_NotLoggedIn()
+	{
+		var success = Sut.Login("", CORRECT_PASSWORD);
+
+		Assert.IsFalse(success);
+		Assert.AreEqual("", Sut.User);
+	}
+
+	[TestMethod]
+	public void Login_UserButNoPassword_NotLoggedIn()
+	{
+		var success = Sut.Login(USER_NAME, "");
+
+		Assert.IsFalse(success);
+		Assert.AreEqual("", Sut.User);
+	}
+
+	[TestMethod]
 	public void Login_WrongPassword_NotLoggedIn()
 	{
 		var success = Sut.Login(USER_NAME, WRONG_PASSWORD);

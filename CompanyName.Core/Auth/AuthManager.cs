@@ -8,7 +8,7 @@ public class AuthManager : Manager, IAuthManager
 
 	public bool Login(string user, string password)
 	{
-		var success = user != "" && password != "" && user.Length == password.Length;
+		var success = ValidateCredentials(user, password);
 
 		if (!success)
 			return success;
@@ -29,4 +29,7 @@ public class AuthManager : Manager, IAuthManager
 
 		return true;
 	}
+
+	private static bool ValidateCredentials(string user, string password) =>
+		user.Length == password.Length && password != "";
 }
