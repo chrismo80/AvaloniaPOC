@@ -27,7 +27,8 @@ public class FileLoggerTests
 	[DataRow(10, 25, 3)]
 	[DataRow(100, 25, 1)]
 	[DataRow(100, 950, 10)]
-	public void Log_MultipleFileMultipleEntries_CountMatches(int maxEntries, int entries, int files)
+	public void Log_MultipleFileMultipleEntries_CountMatches(
+		int maxEntries, int entries, int files)
 	{
 		// Arrange
 		_sut.MaxEntriesPerFile = maxEntries;
@@ -43,6 +44,37 @@ public class FileLoggerTests
 
 		Assert.AreEqual(files, result.Files);
 		Assert.AreEqual(entries, result.Entries);
+	}
+
+	[TestMethod]
+	[DataRow(1_000, 500, 1)]
+	public void Log_Concurrency_NoRaceConditions(
+		int maxEntries, int entries, int files)
+	{
+		_sut.MaxEntriesPerFile = maxEntries;
+
+		// A single trigger for all tasks to start simultaneously
+		var startTrigger = new TaskCompletionSource();
+
+		var tasks = Enumerable.Range(1, entries)
+			.Select(i => RunWhenTriggered(startTrigger.Task, i));
+
+		// Set Trigger
+		startTrigger.SetResult();
+
+		// Wait for all tasks to be finished
+		Task.WhenAll(tasks).Wait();
+
+		var result = Count();
+
+		Assert.AreEqual(files, result.Files);
+		Assert.AreEqual(entries, result.Entries);
+	}
+
+	private async Task RunWhenTriggered(Task trigger, int i)
+	{
+		await trigger; // Wait for the signal to start
+		await _sut.Log("Entry " + i);
 	}
 
 	private (int Files, int Entries) Count()
