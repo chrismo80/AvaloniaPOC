@@ -14,7 +14,7 @@ public static class ImageExtensions
 
 		using var stream = new MemoryStream();
 
-		source?.Save(stream, ImageFormat.Png);
+		source.Save(stream, ImageFormat.Png);
 
 		stream.Position = 0;
 
@@ -28,7 +28,7 @@ public static class ImageExtensions
 
 		using var stream = new MemoryStream();
 
-		source?.Save(stream);
+		source.Save(stream);
 
 		stream.Position = 0;
 

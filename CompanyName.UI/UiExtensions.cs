@@ -69,7 +69,13 @@ public static class UiExtensions
 
 		// get new instance of same window (transient service)
 		var newWindow = (Window)provider.GetRequiredService(currentWindow.GetType());
-		newWindow.DataContext = currentWindow.DataContext;
+
+		// do not load new data context
+		//newWindow.DataContext = currentWindow.DataContext;
+
+		// load new data context (e.g. if view models use resources in code behind)
+		newWindow.DataContext = provider.GetRequiredService(currentWindow.DataContext!.GetType());
+
 		desktop.MainWindow = newWindow;
 
 		newWindow.Show();

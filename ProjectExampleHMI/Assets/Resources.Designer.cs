@@ -68,5 +68,23 @@ namespace ProjectExampleHMI.Assets {
                 return ResourceManager.GetString("Overview", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force.
+        /// </summary>
+        public static string Force {
+            get {
+                return ResourceManager.GetString("Force", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Temperature.
+        /// </summary>
+        public static string Temperature {
+            get {
+                return ResourceManager.GetString("Temperature", resourceCulture);
+            }
+        }
     }
 }
