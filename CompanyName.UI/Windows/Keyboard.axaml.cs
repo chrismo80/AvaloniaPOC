@@ -121,16 +121,16 @@ public partial class Keyboard : Window
 
 	private void GetAnimationPath(int steps)
 	{
-		if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-		{
-			Avalonia.Platform.Screen screen = desktop.MainWindow!.Screens.Primary!;
+		if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+			return;
 
-			PixelSize screenSize = screen.WorkingArea.Size;
-			PixelSize windowSize = PixelSize.FromSize(ClientSize, screen.Scaling);
+		var screen = desktop.MainWindow!.Screens.Primary!;
 
-			foreach (var step in GetPath(screenSize.Height, screenSize.Height - windowSize.Height, steps))
-				AnimationPath.Add(new PixelPoint(screenSize.Width / 2 - windowSize.Width / 2, (int)step));
-		}
+		var screenSize = screen.WorkingArea.Size;
+		var windowSize = PixelSize.FromSize(ClientSize, screen.Scaling);
+
+		foreach (var step in GetPath(screenSize.Height, screenSize.Height - windowSize.Height, steps))
+			AnimationPath.Add(new PixelPoint(screenSize.Width / 2 - windowSize.Width / 2, (int)step));
 	}
 
 	private void Animate()
@@ -225,11 +225,12 @@ public partial class Keyboard : Window
 		{
 			Position = AnimationPath[i++];
 
-			if (i >= AnimationPath.Count)
-			{
-				timer.Stop();
-				Close();
-			}
+			if (i < AnimationPath.Count)
+				return;
+
+			timer.Stop();
+
+			Close();
 		};
 
 		timer.Start();
