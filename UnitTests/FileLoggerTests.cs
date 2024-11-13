@@ -39,10 +39,7 @@ public class FileLoggerTests
 		_sut.Log("Last Entry").Wait();
 
 		// Assert
-		var result = CountFilesAndEntries();
-
-		Assert.AreEqual(files, result.Files);
-		Assert.AreEqual(entries, result.Entries);
+		Assert.AreEqual((files, entries), CountFilesAndEntries());
 	}
 
 	[TestMethod]
@@ -71,12 +68,8 @@ public class FileLoggerTests
 		// Wait for all tasks to be finished
 		Task.WhenAll(tasks).Wait();
 
-		var result = CountFilesAndEntries();
-
-		Assert.AreEqual(files, result.Files);
-		Assert.AreEqual(entries, result.Entries);
+		Assert.AreEqual((files, entries), CountFilesAndEntries());
 	}
-
 
 	[TestMethod]
 	public void Trace_WithExtension_Success()
@@ -97,7 +90,6 @@ public class FileLoggerTests
 	private (int Files, int Entries) CountFilesAndEntries()
 	{
 		var files = Directory.GetFiles(_sut.LogDirectory);
-
 		var entries = files.Select(file => File.ReadLines(file).Count());
 
 		return (files.Length, entries.Sum());
