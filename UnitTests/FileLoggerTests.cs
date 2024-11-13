@@ -77,6 +77,23 @@ public class FileLoggerTests
 		Assert.AreEqual(entries, result.Entries);
 	}
 
+
+	[TestMethod]
+	public void Trace_WithExtension_Success()
+	{
+		this.Trace("Entry");
+		Assert.AreEqual(default, CountFilesAndEntries());
+
+		// this enables logging via object extension
+		_sut.ConfigureTraceExtensions();
+
+		this.Trace("Entry");
+
+		// wait for async task to finish (not awaitable via extension)
+		Thread.Sleep(1);
+		Assert.AreEqual((1, 1), CountFilesAndEntries());
+	}
+
 	private (int Files, int Entries) CountFilesAndEntries()
 	{
 		var files = Directory.GetFiles(_sut.LogDirectory);
