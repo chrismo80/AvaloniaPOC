@@ -35,15 +35,15 @@ public partial class Chart : ObservableObject
 
 	public bool OutOfRange => Value < Min || Value > Max;
 
-	public int RefreshRate { get; set; }
+	public int RefreshRate { get; }
 
-	public int Min { get; set; }
+	public int Min { get; }
 
-	public int Max { get; set; }
+	public int Max { get; }
 
-	public int Scale { get; set; }
+	public int Scale { get; }
 
-	public int Duration { get; set; }
+	public int Duration { get; }
 
 	public LiveChartsCore.SkiaSharpView.Axis[] XAxes { get; set; }
 

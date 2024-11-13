@@ -5,8 +5,7 @@
     <DataTemplate x:Key="ChartTemplate"
                   DataType="{x:Type dt:Chart}">
         <!-- Chart -->
-        <DockPanel MinHeight="500"
-                   DockPanel.Dock="Top"
+        <DockPanel DockPanel.Dock="Top"
                    LastChildFill="True">
             <DockPanel DockPanel.Dock="Top"
                        LastChildFill="True">
