@@ -11,7 +11,7 @@ public class FileLogger : ILogger
 	int _entriesCounter;
 
 	public string LogDirectory { get; } = "Logs";
-	public string Extension { get; private set; } = ".log";
+	public string Extension { get; } = ".log";
 	public string CurrentFileName { get; private set; } = "";
 
 	public LogLevel LogLevel { get; set; } = LogLevel.Debug;

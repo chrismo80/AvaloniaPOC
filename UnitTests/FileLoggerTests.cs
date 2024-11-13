@@ -21,6 +21,7 @@ public class FileLoggerTests
 	}
 
 	[TestMethod]
+	[DoNotParallelize]
 	[DataRow(10, 1, 1)]
 	[DataRow(10, 3, 1)]
 	[DataRow(10, 25, 3)]
@@ -43,6 +44,7 @@ public class FileLoggerTests
 	}
 
 	[TestMethod]
+	[DoNotParallelize]
 	[DataRow(1_000, 500, 1)]
 	public void Log_Concurrency_NoRaceConditions(
 		int maxEntries, int entries, int files)
@@ -72,6 +74,7 @@ public class FileLoggerTests
 	}
 
 	[TestMethod]
+	[DoNotParallelize]
 	public void Trace_WithExtension_Success()
 	{
 		this.Trace("Entry");
@@ -83,7 +86,7 @@ public class FileLoggerTests
 		this.Trace("Entry");
 
 		// wait for async task to finish (not awaitable via extension)
-		Thread.Sleep(1);
+		Thread.Sleep(10);
 		Assert.AreEqual((1, 1), CountFilesAndEntries());
 	}
 
