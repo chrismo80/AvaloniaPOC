@@ -1,4 +1,3 @@
-using CompanyName.Core;
 using CompanyName.Core.Logging;
 
 namespace UnitTests;

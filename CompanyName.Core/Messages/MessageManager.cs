@@ -7,10 +7,6 @@ public class MessageManager : Manager, IMessageManager, IMessageArchive
 
 	public event EventHandler<Message>? Created;
 
-	public MessageManager()
-	{
-	}
-
 	public void CreateMessage(string text, MessageType type = MessageType.Error)
 	{
 		var message = new Message() { Text = text, Id = 0, Type = type };
