@@ -24,7 +24,7 @@ public partial class SystemOverviewViewModel : CompanyName.UI.ViewModels.PageVie
 		GenerateMatch();
 	}
 
-	public void GenerateMatch()
+	private void GenerateMatch()
 	{
 		var random = new Random();
 
