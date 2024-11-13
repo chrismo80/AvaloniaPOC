@@ -64,6 +64,7 @@ public class MessageTests : ManagerTests<MessageManager>
 		this.CreateMessage("Message", MessageType.Information);
 		Assert.AreEqual(0, Sut.ActiveMessages.Count);
 
+		// this enables message creation via object extension
 		Sut.ConfigureMessageExtensions();
 
 		this.CreateMessage("Message", MessageType.Information);
