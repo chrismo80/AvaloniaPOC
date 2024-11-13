@@ -43,23 +43,24 @@ public partial class SplashScreen : Window
 			.ToList();
 
 		for (int i = 1; i <= services.Count; i++)
-		{
-			int index = i;
-
-			Dispatcher.UIThread.Invoke(() =>
-			{
-				LoadingText.Text = Assets.Resources.Loading + "... " + services[index - 1].ServiceType.Name;
-				Count.Text = index + " / " + services.Count;
-			});
-
-			// let service provider call service ctors to check if all are ready
-			_ = serviceProvider.GetRequiredService(services[i - 1].ServiceType);
-
-			Dispatcher.UIThread.Invoke(() => ProgressBar.Value = i * 100 / services.Count);
-		}
+			LoadService(serviceProvider, services[i - 1], i, services.Count);
 
 		Dispatcher.UIThread.Invoke(() => LoadingText.Text = Assets.Resources.Loading + "...");
 
 		return serviceProvider;
+	}
+
+	private void LoadService(ServiceProvider provider, ServiceDescriptor descriptor, int index, int max)
+	{
+		Dispatcher.UIThread.Invoke(() =>
+		{
+			LoadingText.Text = Assets.Resources.Loading + "... " + descriptor.ServiceType.Name;
+			Count.Text = index + " / " + max;
+		});
+
+		// let service provider call service ctor to check if service is ready, otherwise do not start app
+		_ = provider.GetRequiredService(descriptor.ServiceType);
+
+		Dispatcher.UIThread.Invoke(() => ProgressBar.Value = index * 100 / max);
 	}
 }
