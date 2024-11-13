@@ -26,12 +26,12 @@ public partial class SystemDetailsViewModel : CompanyName.UI.ViewModels.PageView
 	{
 		Axes =
 		[
-			new("X-Achse", "Ready", 15.3),
-			new("Y-Achse", "Error", 43.8),
-			new("Z-Achse", "Busy", 29.4),
-			new("Rotations-Achse", "Ready", 1.4),
-			new("A-Achse", "Ready", 14.2),
-			new("B-Achse", "Error", 51.2),
+			new Axis("X-Achse", "Ready", 15.3),
+			new Axis("Y-Achse", "Error", 43.8),
+			new Axis("Z-Achse", "Busy", 29.4),
+			new Axis("Rotations-Achse", "Ready", 1.4),
+			new Axis("A-Achse", "Ready", 14.2),
+			new Axis("B-Achse", "Error", 51.2),
 		];
 
 		_devices.Add(device1);

@@ -18,8 +18,8 @@ public partial class SystemChartsViewModel : CompanyName.UI.ViewModels.PageViewM
 
 		Charts =
 		[
-			new(device1, $"{Assets.Resources.Force} [N]", "", 100, -10, 10, 2, 20),
-			new(device2, $"{Assets.Resources.Temperature} [°C]", "", 500, 15, 25, 1, 60),
+			new Chart(device1, $"{Assets.Resources.Force} [N]", "", 100, -10, 10, 2, 20),
+			new Chart(device2, $"{Assets.Resources.Temperature} [°C]", "", 500, 15, 25, 1, 60),
 		];
 	}
 }
