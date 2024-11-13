@@ -78,14 +78,13 @@ public class FileLoggerTests
 	public void Trace_WithExtension_Success()
 	{
 		this.Trace("Entry");
+		Thread.Sleep(10); // wait for async task to finish (not awaitable via extension)
 		Assert.AreEqual(default, CountFilesAndEntries());
 
 		// this enables logging via object extension
 		_sut.ConfigureTraceExtensions();
 
 		this.Trace("Entry");
-
-		// wait for async task to finish (not awaitable via extension)
 		Thread.Sleep(10);
 		Assert.AreEqual((1, 1), CountFilesAndEntries());
 	}
