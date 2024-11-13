@@ -12,11 +12,14 @@ public abstract class ManagerTests<T>
 	{
 		Sut = new T();
 
-		InitialAsserts();
+		VerifyInitialState();
 	}
 
 	[TestCleanup]
-	public void Cleanup() => Sut.Dispose();
+	public void Cleanup()
+	{
+		Sut.Dispose();
+	}
 
-	protected abstract void InitialAsserts();
+	protected abstract void VerifyInitialState();
 }

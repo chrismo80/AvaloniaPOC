@@ -5,32 +5,35 @@ namespace UnitTests.ManagerTests;
 [TestClass]
 public class MessageTests : ManagerTests<MessageManager>
 {
-	const int INITIAL_ACTIVE_MESSAGES = 10;
-	const int INITIAL_ARCHIVED_MESSAGES = 0;
-
-	protected override void InitialAsserts()
+	protected override void VerifyInitialState()
 	{
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
-		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES, Sut.ArchivedMessages.Count);
+		Assert.AreEqual(0, Sut.ActiveMessages.Count);
+		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
 	}
 
 	[TestMethod]
 	public void CreateMessage_NewMessage_Success()
 	{
-		Sut.CreateMessage("Message 11", MessageType.Information);
+		Sut.CreateMessage("Message 1", MessageType.Information);
 
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, Sut.ActiveMessages.Count);
+		Assert.AreEqual(1, Sut.ActiveMessages.Count);
 	}
 
 	[TestMethod]
 	public void ArchiveMessage_LastActiveMessage_Success()
 	{
+		Sut.CreateMessage("Message 1", MessageType.Information);
+		Sut.CreateMessage("Message 2", MessageType.Information);
+
+		Assert.AreEqual(2, Sut.ActiveMessages.Count);
+		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
+
 		var message = Sut.ActiveMessages.Last();
 
 		Sut.Archive(message);
 
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
-		Assert.AreEqual(INITIAL_ARCHIVED_MESSAGES + 1, Sut.ArchivedMessages.Count);
+		Assert.AreEqual(2, Sut.ActiveMessages.Count);
+		Assert.AreEqual(1, Sut.ArchivedMessages.Count);
 
 		Assert.AreEqual(message, Sut.ArchivedMessages.Last());
 	}
@@ -39,11 +42,11 @@ public class MessageTests : ManagerTests<MessageManager>
 	public void CreateMessage_WithExtension_Success()
 	{
 		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES, Sut.ActiveMessages.Count);
+		Assert.AreEqual(0, Sut.ActiveMessages.Count);
 
 		Sut.ConfigureMessageExtensions();
 
 		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(INITIAL_ACTIVE_MESSAGES + 1, Sut.ActiveMessages.Count);
+		Assert.AreEqual(1, Sut.ActiveMessages.Count);
 	}
 }

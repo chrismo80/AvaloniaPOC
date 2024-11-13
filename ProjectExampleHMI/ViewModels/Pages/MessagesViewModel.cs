@@ -40,6 +40,8 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
 		_messageManager = messageManager;
 		_messageArchive = messageArchive;
 
+		CreateDummyMessages(10);
+
 		ReadActiveMessages();
 
 		_messageManager.Created += (_, _) => ReadActiveMessages();
@@ -73,6 +75,12 @@ public partial class MessagesViewModel : CompanyName.UI.ViewModels.PageViewModel
 	private void ReadArchivedMessages()
 	{
 		ArchivedMessages = new ObservableCollection<ObservableMessage>(_messageArchive?.ArchivedMessages.Select(m => new ObservableMessage(m)) ?? []);
+	}
+
+	private void CreateDummyMessages(int count)
+	{
+		for (var i = 1; i <= count; i++)
+			_messageManager?.CreateMessage($"Dummy Message {i}", MessageType.Information);
 	}
 }
 
