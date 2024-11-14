@@ -89,6 +89,20 @@ public class FileLoggerTests
 		Assert.AreEqual((1, 1), CountFilesAndEntries());
 	}
 
+	[TestMethod]
+	[DoNotParallelize]
+	public void Log_ExceptionMessage_Success()
+	{
+		var exception = new Exception("Test");
+
+		_sut.ConfigureTraceExtensions();
+
+		this.Trace(exception);
+		Thread.Sleep(10);
+
+		Assert.AreEqual((1, 1), CountFilesAndEntries());
+	}
+
 	private (int Files, int Entries) CountFilesAndEntries()
 	{
 		var files = Directory.GetFiles(_sut.LogDirectory);
