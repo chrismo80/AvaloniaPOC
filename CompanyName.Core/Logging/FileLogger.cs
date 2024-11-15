@@ -1,13 +1,10 @@
-﻿using System.Text;
-using Microsoft.Extensions.Configuration;
-
-namespace CompanyName.Core.Logging;
+﻿namespace CompanyName.Core.Logging;
 
 public class FileLogger : ILogger
 {
     readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-    private readonly StringBuilder _cache = new();
+    private readonly System.Text.StringBuilder _cache = new();
     private readonly object _lock = new();
 
     private readonly System.Timers.Timer _flushTimer = new();
@@ -35,7 +32,7 @@ public class FileLogger : ILogger
         Init();
     }
 
-    public FileLogger(IConfiguration configuration)
+    public FileLogger(Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         var config = configuration.GetSection("Logging");
 
