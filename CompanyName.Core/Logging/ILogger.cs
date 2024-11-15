@@ -12,5 +12,5 @@ public enum LogLevel
 
 public interface ILogger
 {
-	public Task Log(string text, LogLevel level = LogLevel.Debug);
+	public void Log(string text, LogLevel level = LogLevel.Debug);
 }
