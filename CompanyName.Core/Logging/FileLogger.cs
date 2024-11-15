@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace CompanyName.Core.Logging;
@@ -11,7 +10,7 @@ public class FileLogger : ILogger
     private readonly StringBuilder _cache = new();
     private readonly object _lock = new();
 
-    private System.Timers.Timer _flushTimer = new();
+    private readonly System.Timers.Timer _flushTimer = new();
 
     int _entriesCounter;
 
@@ -27,9 +26,11 @@ public class FileLogger : ILogger
 
     public int MaxEntriesPerFile { get; set; } = 100_000;
 
-    public FileLogger(int flushIntervall = 1_000)
+    // ctor for unit tests only
+    public FileLogger()
     {
-        FlushInterval = flushIntervall;
+        // small interval for unit tests
+        FlushInterval = 42;
 
         Init();
     }
@@ -56,7 +57,7 @@ public class FileLogger : ILogger
         if (level < LogLevel)
             return;
 
-        string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level.ToString(),-12}\t{text}";
+        string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
 
         lock (_lock)
         {

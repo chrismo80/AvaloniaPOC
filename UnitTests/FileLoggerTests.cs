@@ -10,7 +10,7 @@ public class FileLoggerTests
     [TestInitialize]
     public void Initialize()
     {
-        _sut = new FileLogger(42);
+        _sut = new FileLogger();
 
         // this enables logging via object extension
         _sut.ConfigureTraceExtensions();
