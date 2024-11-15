@@ -5,106 +5,123 @@ namespace UnitTests;
 [TestClass]
 public class FileLoggerTests
 {
-	FileLogger _sut = null!;
+    FileLogger _sut = null!;
 
-	[TestInitialize]
-	public void Initialize()
-	{
-		_sut = new FileLogger();
-	}
+    [TestInitialize]
+    public void Initialize()
+    {
+        _sut = new FileLogger(42);
 
-	[TestCleanup]
-	public void Cleanup()
-	{
-		if (Directory.Exists(_sut.LogDirectory))
-			Directory.Delete(_sut.LogDirectory, true);
-	}
+        // this enables logging via object extension
+        _sut.ConfigureTraceExtensions();
+    }
 
-	[TestMethod]
-	[DoNotParallelize]
-	[DataRow(10, 1, 1)]
-	[DataRow(10, 3, 1)]
-	[DataRow(10, 25, 3)]
-	[DataRow(100, 25, 1)]
-	[DataRow(100, 950, 10)]
-	public void Log_MultipleFileMultipleEntries_CountMatches(
-		int maxEntries, int entries, int files)
-	{
-		// Arrange
-		_sut.MaxEntriesPerFile = maxEntries;
+    [TestCleanup]
+    public void Cleanup()
+    {
+        // remove log dir, because all unit tests use the same dir, must be clean
+        if (Directory.Exists(_sut.LogDirectory))
+            Directory.Delete(_sut.LogDirectory, true);
+    }
 
-		// Act
-		for (int i = 1; i <= entries; i++)
-			_sut.Log("Entry " + i);
+    [TestMethod]
+    [DoNotParallelize]
+    [DataRow(10, 1, 1)]
+    [DataRow(10, 3, 1)]
+    [DataRow(10, 25, 3)]
+    [DataRow(10, 42, 5)]
+    [DataRow(100, 25, 1)]
+    [DataRow(100, 950, 10)]
+    public void Log_MultipleFileMultipleEntries_CountMatches(
+        int maxEntries, int entries, int files)
+    {
+        // Arrange
+        _sut.MaxEntriesPerFile = maxEntries;
 
-		Task.Delay(_sut.FlushInterval).Wait();
+        // Act
+        for (int i = 1; i <= entries; i++)
+        {
+            _sut.Log("Entry " + i);
 
-		// Assert
-		Assert.AreEqual((files, entries), CountFilesAndEntries());
-	}
+            if (i % 123 == 0) // add some random pauses
+                Task.Delay(_sut.FlushInterval).Wait();
+        }
 
-	[TestMethod]
-	[DoNotParallelize]
-	[DataRow(1_000, 500, 1)]
-	public void Log_Concurrency_NoRaceConditions(
-		int maxEntries, int entries, int files)
-	{
-		_sut.MaxEntriesPerFile = maxEntries;
+        // Assert
+        Assert.AreEqual((files, entries), CountFilesAndEntries());
+    }
 
-		// A trigger for all tasks to start simultaneously
-		var trigger = new TaskCompletionSource();
+    [TestMethod]
+    [DoNotParallelize]
+    [DataRow(1_000, 500, 1)]
+    public void Log_Concurrency_NoRaceConditions(
+        int maxEntries, int entries, int files)
+    {
+        _sut.MaxEntriesPerFile = maxEntries;
 
-		async Task LogWhenTriggered(Task go, int i)
-		{
-			// Wait for the trigger to start
-			await go;
-			_sut.Log("Entry " + i);
-		}
+        // A trigger for all tasks to start simultaneously
+        var trigger = new TaskCompletionSource();
 
-		var tasks = Enumerable.Range(1, entries)
-			.Select(i => LogWhenTriggered(trigger.Task, i));
+        async Task LogWhenTriggered(Task go, int i)
+        {
+            // Wait for the trigger to start
+            await go;
+            _sut.Log("Entry " + i);
+        }
 
-		// Set trigger
-		trigger.SetResult();
+        var tasks = Enumerable.Range(1, entries)
+            .Select(i => LogWhenTriggered(trigger.Task, i));
 
-		// Wait for all tasks to be finished
-		Task.WhenAll(tasks).Wait();
+        // Set trigger
+        trigger.SetResult();
 
-		Assert.AreEqual((files, entries), CountFilesAndEntries());
-	}
+        // Wait for all tasks to be finished
+        Task.WhenAll(tasks).Wait();
 
-	[TestMethod]
-	[DoNotParallelize]
-	public void Trace_WithExtension_Success()
-	{
-		this.Trace("Entry");
-		Assert.AreEqual(default, CountFilesAndEntries());
+        Assert.AreEqual((files, entries), CountFilesAndEntries());
+    }
 
-		// this enables logging via object extension
-		_sut.ConfigureTraceExtensions();
+    [TestMethod]
+    [DoNotParallelize]
+    public void Trace_WithExtension_Success()
+    {
+        this.Trace("Entry via Extension");
+        Assert.AreEqual((1, 1), CountFilesAndEntries());
+    }
 
-		this.Trace("Entry");
-		Assert.AreEqual((1, 1), CountFilesAndEntries());
-	}
+    [TestMethod]
+    [DoNotParallelize]
+    public void Log_ExceptionMessage_Success()
+    {
+        this.Trace(new Exception("Test"));
+        Assert.AreEqual((1, 1), CountFilesAndEntries());
+    }
 
-	[TestMethod]
-	[DoNotParallelize]
-	public void Log_ExceptionMessage_Success()
-	{
-		var exception = new Exception("Test");
+    [TestMethod]
+    [DoNotParallelize]
+    [DataRow(10, 42, 13)]
+    public void Log_MultipleExceptionMessages_ProperPageBreaks(
+        int maxEntries, int entries, int files)
+    {
+        _sut.MaxEntriesPerFile = maxEntries;
 
-		_sut.ConfigureTraceExtensions();
+        var inner = new Exception("inner ex");
+        var ex = new AggregateException(inner, inner, inner);
 
-		this.Trace(exception);
+        for (int i = 1; i <= entries; i++)
+            this.Trace(ex);
 
-		Assert.AreEqual((1, 1), CountFilesAndEntries());
-	}
+        Assert.AreEqual((files, entries * 3), CountFilesAndEntries());
+    }
 
-	private (int Files, int Entries) CountFilesAndEntries()
-	{
-		var files = Directory.GetFiles(_sut.LogDirectory);
-		var entries = files.Select(file => File.ReadLines(file).Count());
+    private (int Files, int Entries) CountFilesAndEntries()
+    {
+        // wait for logger to finish flushing
+        Task.Delay(_sut.FlushInterval * 2).Wait();
 
-		return (files.Length, entries.Sum());
-	}
+        var files = Directory.GetFiles(_sut.LogDirectory);
+        var entries = files.Select(file => File.ReadLines(file).Count());
+
+        return (files.Length, entries.Sum());
+    }
 }

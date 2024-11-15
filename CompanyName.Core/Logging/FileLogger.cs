@@ -1,111 +1,129 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 
 namespace CompanyName.Core.Logging;
 
 public class FileLogger : ILogger
 {
-	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+    readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	private readonly StringBuilder _cache = new StringBuilder();
-	private readonly object _lock = new object();
+    private readonly StringBuilder _cache = new();
+    private readonly object _lock = new();
 
-	private System.Timers.Timer _flushTimer;
+    private System.Timers.Timer _flushTimer = new();
 
-	int _entriesCounter;
+    int _entriesCounter;
 
-	public string LogDirectory { get; } = "Logs";
-	public string Extension { get; } = ".log";
-	public string CurrentFileName { get; private set; } = "";
-	public int FlushInterval => 1000;
+    public string LogDirectory { get; } = "Logs";
 
-	public LogLevel LogLevel { get; set; } = LogLevel.Debug;
-	public int MaxEntriesPerFile { get; set; } = 100_000;
+    public string Extension { get; } = ".log";
 
-	public FileLogger()
-	{
-		Init();
-	}
+    public string CurrentFileName { get; private set; } = "";
 
-	public FileLogger(IConfiguration configuration)
-	{
-		var config = configuration.GetSection("Logging");
+    public int FlushInterval { get; } = 1_000;
 
-		var fileConfig = config["File:Path"]!;
-		_ = Enum.TryParse(config["LogLevel:Default"]!, out LogLevel logLevel);
-		_ = int.TryParse(config["File:MaxEntriesPerFile"]!, out int maxEntriesPerFile);
+    public LogLevel LogLevel { get; set; } = LogLevel.Debug;
 
-		LogLevel = logLevel;
-		MaxEntriesPerFile = maxEntriesPerFile;
+    public int MaxEntriesPerFile { get; set; } = 100_000;
 
-		LogDirectory = Path.GetDirectoryName(fileConfig)!;
-		Extension = Path.GetExtension(fileConfig);
+    public FileLogger(int flushIntervall = 1_000)
+    {
+        FlushInterval = flushIntervall;
 
-		Init();
-	}
+        Init();
+    }
 
-	public void Log(string text, LogLevel level = LogLevel.Debug)
-	{
-		if (level < LogLevel)
-			return;
+    public FileLogger(IConfiguration configuration)
+    {
+        var config = configuration.GetSection("Logging");
 
-		string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level.ToString(),-12}\t{text}";
+        var fileConfig = config["File:Path"]!;
+        _ = Enum.TryParse(config["LogLevel:Default"]!, out LogLevel logLevel);
+        _ = int.TryParse(config["File:MaxEntriesPerFile"]!, out int maxEntriesPerFile);
 
-		lock (_lock)
-		{
-			_cache.AppendLine(logEntry);
-		}
-	}
+        LogLevel = logLevel;
+        MaxEntriesPerFile = maxEntriesPerFile;
 
-	private void FlushLog()
-	{
-		if (_cache.Length == 0)
-			return;
+        LogDirectory = Path.GetDirectoryName(fileConfig)!;
+        Extension = Path.GetExtension(fileConfig);
 
-		string content;
+        Init();
+    }
 
-		lock (_lock)
-		{
-			content = _cache.ToString();
+    public void Log(string text, LogLevel level = LogLevel.Debug)
+    {
+        if (level < LogLevel)
+            return;
 
-			_cache.Clear();
-		}
+        string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level.ToString(),-12}\t{text}";
 
-		_entriesCounter += content.Split(Environment.NewLine).Length;
+        lock (_lock)
+        {
+            _cache.AppendLine(logEntry);
+        }
+    }
 
-		if (_entriesCounter >= MaxEntriesPerFile)
-		{
-			CurrentFileName = GetNextFileName();
-			_entriesCounter = 0;
-		}
+    private void FlushLog()
+    {
+        if (_cache.Length == 0)
+            return;
 
-		File.AppendAllText(CurrentFileName, content);
-	}
+        string contentToFlush;
 
-	private string GetNextFileName()
-	{
-		var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
+        lock (_lock)
+        {
+            contentToFlush = _cache.ToString();
 
-		if (!File.Exists(fileName))
-			return fileName;
+            _cache.Clear();
+        }
 
-		int i = 1;
+        var lines = contentToFlush.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
-		while (File.Exists(fileName))
-			fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
+        while (_entriesCounter + lines.Length > MaxEntriesPerFile)
+        {
+            int spaceLeft = MaxEntriesPerFile - _entriesCounter;
 
-		return fileName;
-	}
+            WriteToFile(lines.Take(spaceLeft).ToArray());
 
-	private void Init()
-	{
-		Directory.CreateDirectory(LogDirectory);
+            lines = lines.Skip(spaceLeft).ToArray();
 
-		CurrentFileName = GetNextFileName();
+            CurrentFileName = GetNextFileName();
 
-		_flushTimer = new System.Timers.Timer(FlushInterval);
-		_flushTimer.Elapsed += (_, _) => FlushLog();
-		_flushTimer.AutoReset = true;
-		_flushTimer.Start();
-	}
+            _entriesCounter = 0;
+        }
+
+        _entriesCounter += lines.Length;
+
+        WriteToFile(lines);
+    }
+
+    private void WriteToFile(params string[] lines) => File.AppendAllLines(CurrentFileName, lines);
+
+    private string GetNextFileName()
+    {
+        var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
+
+        if (!File.Exists(fileName))
+            return fileName;
+
+        int i = 1;
+
+        while (File.Exists(fileName))
+            fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
+
+        return fileName;
+    }
+
+    private void Init()
+    {
+        Directory.CreateDirectory(LogDirectory);
+
+        CurrentFileName = GetNextFileName();
+
+        _flushTimer.Elapsed += (_, _) => FlushLog();
+        _flushTimer.Interval = FlushInterval;
+        _flushTimer.AutoReset = true;
+        _flushTimer.Start();
+    }
 }
