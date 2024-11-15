@@ -1,4 +1,8 @@
-﻿namespace CompanyName.Core.Logging;
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("UnitTests")]
+
+namespace CompanyName.Core.Logging;
 
 public class FileLogger : ILogger
 {
@@ -19,18 +23,9 @@ public class FileLogger : ILogger
 
     public int FlushInterval { get; } = 1_000;
 
-    public LogLevel LogLevel { get; set; } = LogLevel.Debug;
+    public LogLevel LogLevel { get; internal set; } = LogLevel.Debug;
 
-    public int MaxEntriesPerFile { get; set; } = 100_000;
-
-    // ctor for unit tests only
-    public FileLogger()
-    {
-        // small interval for unit tests
-        FlushInterval = 42;
-
-        Init();
-    }
+    public int MaxEntriesPerFile { get; internal set; } = 100_000;
 
     public FileLogger(Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
@@ -45,6 +40,15 @@ public class FileLogger : ILogger
 
         LogDirectory = Path.GetDirectoryName(fileConfig)!;
         Extension = Path.GetExtension(fileConfig);
+
+        Init();
+    }
+
+    // ctor for unit tests only
+    internal FileLogger()
+    {
+        // small interval for unit tests
+        FlushInterval = 42;
 
         Init();
     }
