@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace CompanyName.Core.Logging;
 
@@ -6,13 +7,17 @@ public class FileLogger : ILogger
 {
 	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	readonly SemaphoreSlim _fileLock = new(1, 1);
+	private readonly StringBuilder _cache = new StringBuilder();
+	private readonly object _lock = new object();
+
+	private System.Timers.Timer _flushTimer;
 
 	int _entriesCounter;
 
 	public string LogDirectory { get; } = "Logs";
 	public string Extension { get; } = ".log";
 	public string CurrentFileName { get; private set; } = "";
+	public int FlushInterval => 1000;
 
 	public LogLevel LogLevel { get; set; } = LogLevel.Debug;
 	public int MaxEntriesPerFile { get; set; } = 100_000;
@@ -39,34 +44,42 @@ public class FileLogger : ILogger
 		Init();
 	}
 
-	public async Task Log(string text, LogLevel level = LogLevel.Debug)
+	public void Log(string text, LogLevel level = LogLevel.Debug)
 	{
 		if (level < LogLevel)
 			return;
 
-		string category = level.ToString().PadRight(12);
+		string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level.ToString(),-12}\t{text}";
 
-		await WriteToFile($"{DateTime.Now:HH:mm:ss.fff}\t{category}\t{text}{Environment.NewLine}");
+		lock (_lock)
+		{
+			_cache.AppendLine(logEntry);
+		}
 	}
 
-	private async Task WriteToFile(string line)
+	private void FlushLog()
 	{
-		await _fileLock.WaitAsync().ConfigureAwait(false);
+		if (_cache.Length == 0)
+			return;
 
-		if (++_entriesCounter >= MaxEntriesPerFile)
+		string content;
+
+		lock (_lock)
+		{
+			content = _cache.ToString();
+
+			_cache.Clear();
+		}
+
+		_entriesCounter += content.Split(Environment.NewLine).Length;
+
+		if (_entriesCounter >= MaxEntriesPerFile)
 		{
 			CurrentFileName = GetNextFileName();
 			_entriesCounter = 0;
 		}
 
-		try
-		{
-			await File.AppendAllTextAsync(CurrentFileName, line).ConfigureAwait(false);
-		}
-		finally
-		{
-			_fileLock.Release();
-		}
+		File.AppendAllText(CurrentFileName, content);
 	}
 
 	private string GetNextFileName()
@@ -89,5 +102,10 @@ public class FileLogger : ILogger
 		Directory.CreateDirectory(LogDirectory);
 
 		CurrentFileName = GetNextFileName();
+
+		_flushTimer = new System.Timers.Timer(FlushInterval);
+		_flushTimer.Elapsed += (_, _) => FlushLog();
+		_flushTimer.AutoReset = true;
+		_flushTimer.Start();
 	}
 }

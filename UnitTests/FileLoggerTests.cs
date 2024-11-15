@@ -34,10 +34,10 @@ public class FileLoggerTests
 		_sut.MaxEntriesPerFile = maxEntries;
 
 		// Act
-		for (int i = 1; i < entries; i++)
-			_ = _sut.Log("Entry " + i);
+		for (int i = 1; i <= entries; i++)
+			_sut.Log("Entry " + i);
 
-		_sut.Log("Last Entry").Wait();
+		Task.Delay(_sut.FlushInterval).Wait();
 
 		// Assert
 		Assert.AreEqual((files, entries), CountFilesAndEntries());
@@ -58,7 +58,7 @@ public class FileLoggerTests
 		{
 			// Wait for the trigger to start
 			await go;
-			await _sut.Log("Entry " + i);
+			_sut.Log("Entry " + i);
 		}
 
 		var tasks = Enumerable.Range(1, entries)
@@ -78,14 +78,12 @@ public class FileLoggerTests
 	public void Trace_WithExtension_Success()
 	{
 		this.Trace("Entry");
-		Thread.Sleep(10); // wait for async task to finish (not awaitable via extension)
 		Assert.AreEqual(default, CountFilesAndEntries());
 
 		// this enables logging via object extension
 		_sut.ConfigureTraceExtensions();
 
 		this.Trace("Entry");
-		Thread.Sleep(10);
 		Assert.AreEqual((1, 1), CountFilesAndEntries());
 	}
 
@@ -98,7 +96,6 @@ public class FileLoggerTests
 		_sut.ConfigureTraceExtensions();
 
 		this.Trace(exception);
-		Thread.Sleep(10);
 
 		Assert.AreEqual((1, 1), CountFilesAndEntries());
 	}
