@@ -9,7 +9,7 @@ public class AuthTests : ManagerTests<AuthManager>
 	private const string CORRECT_PASSWORD = "pass";
 	private const string WRONG_PASSWORD = "password";
 
-	protected override void VerifyInitialState()
+	protected override void Pre()
 	{
 		Assert.AreEqual("", Sut.User);
 	}

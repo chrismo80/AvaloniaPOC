@@ -12,7 +12,7 @@ public abstract class ManagerTests<T>
 	{
 		Sut = new T();
 
-		VerifyInitialState();
+		Pre();
 	}
 
 	[TestCleanup]
@@ -21,5 +21,5 @@ public abstract class ManagerTests<T>
 		Sut.Dispose();
 	}
 
-	protected abstract void VerifyInitialState();
+	protected abstract void Pre();
 }

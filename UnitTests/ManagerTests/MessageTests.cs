@@ -5,10 +5,13 @@ namespace UnitTests.ManagerTests;
 [TestClass]
 public class MessageTests : ManagerTests<MessageManager>
 {
-	protected override void VerifyInitialState()
+	protected override void Pre()
 	{
 		Assert.AreEqual(0, Sut.ActiveMessages.Count);
 		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
+
+		// this enables message creation via object extension
+		Sut.ConfigureMessageExtensions();
 	}
 
 	[TestMethod]
@@ -62,12 +65,14 @@ public class MessageTests : ManagerTests<MessageManager>
 	public void CreateMessage_WithExtension_Success()
 	{
 		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(0, Sut.ActiveMessages.Count);
+		Assert.AreEqual(1, Sut.ActiveMessages.Count);
+	}
 
-		// this enables message creation via object extension
-		Sut.ConfigureMessageExtensions();
-
-		this.CreateMessage("Message", MessageType.Information);
+	[TestMethod]
+	[DoNotParallelize]
+	public void CreateMessage_ExceptionMessage_Success()
+	{
+		this.CreateMessage(new Exception("Test"));
 		Assert.AreEqual(1, Sut.ActiveMessages.Count);
 	}
 }
