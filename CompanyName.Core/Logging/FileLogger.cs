@@ -63,7 +63,7 @@ public class FileLogger : BaseService, ILogger
 		_flushTimer.Dispose();
 	}
 
-	private void FlushLog()
+	private void FlushCache()
 	{
 		if (_cache.Count == 0)
 			return;
@@ -99,9 +99,9 @@ public class FileLogger : BaseService, ILogger
 		WriteToFile(entries);
 	}
 
-	private void WriteToFile(Span<string> lines)
+	private void WriteToFile(Span<string> logEntries)
 	{
-		File.AppendAllLines(CurrentFileName, lines.ToArray());
+		File.AppendAllLines(CurrentFileName, logEntries.ToArray());
 	}
 
 	private string GetNextFileName()
@@ -125,7 +125,7 @@ public class FileLogger : BaseService, ILogger
 
 		CurrentFileName = GetNextFileName();
 
-		_flushTimer.Elapsed += (_, _) => FlushLog();
+		_flushTimer.Elapsed += (_, _) => FlushCache();
 		_flushTimer.Interval = FlushInterval;
 		_flushTimer.AutoReset = true;
 		_flushTimer.Start();
