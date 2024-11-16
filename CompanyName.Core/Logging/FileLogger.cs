@@ -1,131 +1,127 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("UnitTests")]
-
-namespace CompanyName.Core.Logging;
+﻿namespace CompanyName.Core.Logging;
 
 public class FileLogger : ILogger
 {
-    readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-    private readonly System.Text.StringBuilder _cache = new();
-    private readonly object _lock = new();
+	private readonly System.Text.StringBuilder _cache = new();
+	private readonly object _lock = new();
 
-    private readonly System.Timers.Timer _flushTimer = new();
+	private readonly System.Timers.Timer _flushTimer = new();
 
-    int _entriesCounter;
+	int _entriesCounter;
 
-    public string LogDirectory { get; } = "Logs";
+	public string LogDirectory { get; } = "Logs";
 
-    public string Extension { get; } = ".log";
+	public string Extension { get; } = ".log";
 
-    public string CurrentFileName { get; private set; } = "";
+	public string CurrentFileName { get; private set; } = "";
 
-    public int FlushInterval { get; } = 1_000;
+	public int FlushInterval { get; } = 1_000;
 
-    public LogLevel LogLevel { get; internal set; } = LogLevel.Debug;
+	public LogLevel LogLevel { get; internal set; } = LogLevel.Debug;
 
-    public int MaxEntriesPerFile { get; internal set; } = 100_000;
+	public int MaxEntriesPerFile { get; internal set; } = 100_000;
 
-    public FileLogger(Microsoft.Extensions.Configuration.IConfiguration configuration)
-    {
-        var config = configuration.GetSection("Logging");
+	public FileLogger(Microsoft.Extensions.Configuration.IConfiguration configuration)
+	{
+		var config = configuration.GetSection("Logging");
 
-        var fileConfig = config["File:Path"]!;
-        _ = Enum.TryParse(config["LogLevel:Default"]!, out LogLevel logLevel);
-        _ = int.TryParse(config["File:MaxEntriesPerFile"]!, out int maxEntriesPerFile);
+		var fileConfig = config["File:Path"]!;
+		_ = Enum.TryParse(config["LogLevel:Default"]!, out LogLevel logLevel);
+		_ = int.TryParse(config["File:MaxEntriesPerFile"]!, out int maxEntriesPerFile);
 
-        LogLevel = logLevel;
-        MaxEntriesPerFile = maxEntriesPerFile;
+		LogLevel = logLevel;
+		MaxEntriesPerFile = maxEntriesPerFile;
 
-        LogDirectory = Path.GetDirectoryName(fileConfig)!;
-        Extension = Path.GetExtension(fileConfig);
+		LogDirectory = Path.GetDirectoryName(fileConfig)!;
+		Extension = Path.GetExtension(fileConfig);
 
-        Init();
-    }
+		Init();
+	}
 
-    // ctor for unit tests only
-    internal FileLogger()
-    {
-        // small interval for unit tests
-        FlushInterval = 42;
+	// ctor for unit tests only
+	internal FileLogger()
+	{
+		// small interval for unit tests
+		FlushInterval = 42;
 
-        Init();
-    }
+		Init();
+	}
 
-    public void Log(string text, LogLevel level = LogLevel.Debug)
-    {
-        if (level < LogLevel)
-            return;
+	public void Log(string text, LogLevel level = LogLevel.Debug)
+	{
+		if (level < LogLevel)
+			return;
 
-        string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
+		string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
 
-        lock (_lock)
-        {
-            _cache.AppendLine(logEntry);
-        }
-    }
+		lock (_lock)
+		{
+			_cache.AppendLine(logEntry);
+		}
+	}
 
-    private void FlushLog()
-    {
-        if (_cache.Length == 0)
-            return;
+	private void FlushLog()
+	{
+		if (_cache.Length == 0)
+			return;
 
-        string contentToFlush;
+		string contentToFlush;
 
-        lock (_lock)
-        {
-            contentToFlush = _cache.ToString();
+		lock (_lock)
+		{
+			contentToFlush = _cache.ToString();
 
-            _cache.Clear();
-        }
+			_cache.Clear();
+		}
 
-        var lines = contentToFlush.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+		var lines = contentToFlush.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
-        while (_entriesCounter + lines.Length > MaxEntriesPerFile)
-        {
-            int spaceLeft = MaxEntriesPerFile - _entriesCounter;
+		while (_entriesCounter + lines.Length > MaxEntriesPerFile)
+		{
+			int spaceLeft = MaxEntriesPerFile - _entriesCounter;
 
-            WriteToFile(lines.Take(spaceLeft).ToArray());
+			WriteToFile(lines.Take(spaceLeft).ToArray());
 
-            lines = lines.Skip(spaceLeft).ToArray();
+			lines = lines.Skip(spaceLeft).ToArray();
 
-            CurrentFileName = GetNextFileName();
+			CurrentFileName = GetNextFileName();
 
-            _entriesCounter = 0;
-        }
+			_entriesCounter = 0;
+		}
 
-        _entriesCounter += lines.Length;
+		_entriesCounter += lines.Length;
 
-        WriteToFile(lines);
-    }
+		WriteToFile(lines);
+	}
 
-    private void WriteToFile(params string[] lines) => File.AppendAllLines(CurrentFileName, lines);
+	private void WriteToFile(params string[] lines) => File.AppendAllLines(CurrentFileName, lines);
 
-    private string GetNextFileName()
-    {
-        var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
+	private string GetNextFileName()
+	{
+		var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
 
-        if (!File.Exists(fileName))
-            return fileName;
+		if (!File.Exists(fileName))
+			return fileName;
 
-        int i = 1;
+		int i = 1;
 
-        while (File.Exists(fileName))
-            fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
+		while (File.Exists(fileName))
+			fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
 
-        return fileName;
-    }
+		return fileName;
+	}
 
-    private void Init()
-    {
-        Directory.CreateDirectory(LogDirectory);
+	private void Init()
+	{
+		Directory.CreateDirectory(LogDirectory);
 
-        CurrentFileName = GetNextFileName();
+		CurrentFileName = GetNextFileName();
 
-        _flushTimer.Elapsed += (_, _) => FlushLog();
-        _flushTimer.Interval = FlushInterval;
-        _flushTimer.AutoReset = true;
-        _flushTimer.Start();
-    }
+		_flushTimer.Elapsed += (_, _) => FlushLog();
+		_flushTimer.Interval = FlushInterval;
+		_flushTimer.AutoReset = true;
+		_flushTimer.Start();
+	}
 }
