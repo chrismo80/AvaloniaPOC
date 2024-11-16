@@ -9,7 +9,7 @@ public abstract class BaseService : IDisposable
 	protected BaseService()
 	{
 		this.Trace("Ctor");
-		Task.Delay(200).Wait();
+		Task.Delay(100).Wait();
 	}
 
 	public void Dispose()

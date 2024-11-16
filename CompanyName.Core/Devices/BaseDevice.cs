@@ -67,7 +67,7 @@ public abstract class BaseDevice : INotifyPropertyChanged, IDevice
 
 	protected virtual void Init()
 	{
-		Task.Delay(200).Wait();
+		Task.Delay(100).Wait();
 
 		Guard(DateTime.Now.Microsecond <= 300, "Init failed");
 	}

@@ -7,6 +7,9 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 {
 	protected override void Pre()
 	{
+		Sut.FlushInterval = 42;
+		Sut.Init();
+
 		// this enables logging via object extension
 		Sut.ConfigureTraceExtensions();
 	}
