@@ -1,6 +1,6 @@
 ﻿namespace CompanyName.Core.Logging;
 
-public class FileLogger : ILogger
+public class FileLogger : BaseService, ILogger
 {
 	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
@@ -60,6 +60,12 @@ public class FileLogger : ILogger
 		{
 			_cache.AppendLine(logEntry);
 		}
+	}
+
+	protected override void OnDisposing()
+	{
+		_flushTimer.Stop();
+		_flushTimer.Dispose();
 	}
 
 	private void FlushLog()

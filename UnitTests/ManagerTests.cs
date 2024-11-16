@@ -3,7 +3,7 @@ using CompanyName.Core;
 namespace UnitTests;
 
 public abstract class ManagerTests<T>
-	where T : Manager, new()
+	where T : BaseService, new()
 {
 	protected T Sut = null!;
 

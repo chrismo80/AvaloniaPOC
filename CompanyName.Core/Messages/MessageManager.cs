@@ -1,6 +1,6 @@
 ﻿namespace CompanyName.Core.Messages;
 
-public class MessageManager : Manager, IMessageManager, IMessageArchive
+public class MessageManager : BaseService, IMessageManager, IMessageArchive
 {
 	public List<Message> ActiveMessages { get; } = [];
 	public List<Message> ArchivedMessages { get; } = [];

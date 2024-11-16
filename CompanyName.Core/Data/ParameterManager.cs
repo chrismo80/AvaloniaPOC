@@ -2,7 +2,7 @@
 
 namespace CompanyName.Core.Data;
 
-public class ParameterManager : Manager, IParameterManager
+public class ParameterManager : BaseService, IParameterManager
 {
 	readonly List<Parameter> _parameters = Enumerable.Range(1, 8)
 		.Select(i => new Parameter("O", "P", "C", $"Name{i}", "", "", null, i, null)).ToList();

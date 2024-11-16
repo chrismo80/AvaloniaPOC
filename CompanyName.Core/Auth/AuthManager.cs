@@ -1,6 +1,6 @@
 ﻿namespace CompanyName.Core.Auth;
 
-public class AuthManager : Manager, IAuthManager
+public class AuthManager : BaseService, IAuthManager
 {
 	public event EventHandler<string>? UserChanged;
 

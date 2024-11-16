@@ -2,11 +2,11 @@
 
 namespace CompanyName.Core;
 
-public abstract class Manager : IDisposable
+public abstract class BaseService : IDisposable
 {
 	private bool _disposed;
 
-	protected Manager()
+	protected BaseService()
 	{
 		this.Trace("Ctor");
 		Task.Delay(200).Wait();
