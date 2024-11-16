@@ -4,7 +4,7 @@ public class FileLogger : BaseService, ILogger
 {
 	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	private readonly System.Text.StringBuilder _cache = new();
+	private readonly List<string> _cache = [];
 	private readonly object _lock = new();
 
 	private readonly System.Timers.Timer _flushTimer = new();
@@ -58,7 +58,7 @@ public class FileLogger : BaseService, ILogger
 
 		lock (_lock)
 		{
-			_cache.AppendLine(logEntry);
+			_cache.Add(logEntry);
 		}
 	}
 
@@ -70,39 +70,41 @@ public class FileLogger : BaseService, ILogger
 
 	private void FlushLog()
 	{
-		if (_cache.Length == 0)
+		if (_cache.Count == 0)
 			return;
 
-		string contentToFlush;
+		string[] entries;
 
 		lock (_lock)
 		{
-			contentToFlush = _cache.ToString();
+			entries = _cache.ToArray();
 
 			_cache.Clear();
 		}
 
-		var lines = contentToFlush.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+		// check if cache larger than remaining space in current file
+		while (_entriesCounter + entries.Length > MaxEntriesPerFile)
+			entries = FinishCurrentFile(entries);
 
-		while (_entriesCounter + lines.Length > MaxEntriesPerFile)
-		{
-			int spaceLeft = MaxEntriesPerFile - _entriesCounter;
+		_entriesCounter += entries.Length;
 
-			WriteToFile(lines.Take(spaceLeft).ToArray());
-
-			lines = lines.Skip(spaceLeft).ToArray();
-
-			CurrentFileName = GetNextFileName();
-
-			_entriesCounter = 0;
-		}
-
-		_entriesCounter += lines.Length;
-
-		WriteToFile(lines);
+		WriteToFile(entries);
 	}
 
-	private void WriteToFile(params string[] lines) => File.AppendAllLines(CurrentFileName, lines);
+	private string[] FinishCurrentFile(string[] entries)
+	{
+		int spaceLeft = MaxEntriesPerFile - _entriesCounter;
+
+		// finish current file and create new filename, reset line counter
+		WriteToFile(entries[..spaceLeft]);
+		CurrentFileName = GetNextFileName();
+		_entriesCounter = 0;
+
+		return entries[spaceLeft..];
+	}
+
+	private void WriteToFile(string[] lines) =>
+		File.AppendAllLines(CurrentFileName, lines);
 
 	private string GetNextFileName()
 	{

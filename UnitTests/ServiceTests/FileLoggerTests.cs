@@ -29,6 +29,7 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 	public void Log_ChangeLogLevel_CountMatches(
 		LogLevel logLevel, int entries)
 	{
+		Sut.MaxEntriesPerFile = 100;
 		Sut.LogLevel = logLevel;
 
 		void CreateLogs(int count, LogLevel level)
@@ -122,7 +123,7 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 
 	[TestMethod]
 	[DoNotParallelize]
-	[DataRow(10, 42, 13)]
+	[DataRow(10, 42, 5)]
 	public void Log_MultipleExceptionMessages_ProperPageBreaks(
 		int maxEntries, int entries, int files)
 	{
@@ -131,6 +132,7 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 		var inner = new Exception("inner ex");
 		var ex = new AggregateException(inner, inner, inner);
 
+		// 1 trace creates 3 lines per entry
 		for (int i = 1; i <= entries; i++)
 			this.Trace(ex);
 
