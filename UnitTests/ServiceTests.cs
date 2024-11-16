@@ -2,8 +2,7 @@ using CompanyName.Core;
 
 namespace UnitTests;
 
-public abstract class ServiceTests<T>
-	where T : BaseService
+public abstract class ServiceTests<T> where T : BaseService
 {
 	protected T Sut = null!;
 
@@ -11,16 +10,14 @@ public abstract class ServiceTests<T>
 	public void Initialize()
 	{
 		Sut = (T)Activator.CreateInstance(typeof(T), true)!;
-
 		Pre();
 	}
 
 	[TestCleanup]
 	public void Cleanup()
 	{
-		Post();
-
 		Sut.Dispose();
+		Post();
 	}
 
 	protected virtual void Pre()
