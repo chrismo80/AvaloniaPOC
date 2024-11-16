@@ -1,9 +1,9 @@
 using CompanyName.Core.Auth;
 
-namespace UnitTests.ManagerTests;
+namespace UnitTests.ServiceTests;
 
 [TestClass]
-public class AuthTests : ManagerTests<AuthManager>
+public class AuthTests : ServiceTests<AuthManager>
 {
 	private const string USER_NAME = "user";
 	private const string CORRECT_PASSWORD = "pass";

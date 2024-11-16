@@ -1,9 +1,9 @@
 using CompanyName.Core.Messages;
 
-namespace UnitTests.ManagerTests;
+namespace UnitTests.ServiceTests;
 
 [TestClass]
-public class MessageTests : ManagerTests<MessageManager>
+public class MessageTests : ServiceTests<MessageManager>
 {
 	protected override void Pre()
 	{
