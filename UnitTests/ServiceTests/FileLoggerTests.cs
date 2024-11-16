@@ -31,23 +31,18 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 	{
 		Sut.LogLevel = logLevel;
 
-		for (int i = 1; i <= 2; i++)
-			Sut.Log("Entry " + i, LogLevel.Trace);
+		void CreateLogs(int count, LogLevel level)
+		{
+			for (int i = 1; i <= count; i++)
+				Sut.Log("Entry " + i, level);
+		}
 
-		for (int i = 1; i <= 3; i++)
-			Sut.Log("Entry " + i, LogLevel.Debug);
-
-		for (int i = 1; i <= 4; i++)
-			Sut.Log("Entry " + i, LogLevel.Information);
-
-		for (int i = 1; i <= 5; i++)
-			Sut.Log("Entry " + i, LogLevel.Warning);
-
-		for (int i = 1; i <= 6; i++)
-			Sut.Log("Entry " + i, LogLevel.Error);
-
-		for (int i = 1; i <= 7; i++)
-			Sut.Log("Entry " + i, LogLevel.Critical);
+		CreateLogs(2, LogLevel.Trace);
+		CreateLogs(3, LogLevel.Debug);
+		CreateLogs(4, LogLevel.Information);
+		CreateLogs(5, LogLevel.Warning);
+		CreateLogs(6, LogLevel.Error);
+		CreateLogs(7, LogLevel.Critical);
 
 		Assert.AreEqual((1, entries), CountFilesAndEntries());
 	}
