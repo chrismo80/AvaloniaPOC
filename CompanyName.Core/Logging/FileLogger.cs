@@ -119,16 +119,16 @@ public class FileLogger : BaseService, ILogger
 
 		NewFileName();
 
-		_entriesCounter = 0;
-
 		return entries[spaceLeft..];
 	}
 
-	private string FormatEntry(string text, LogLevel level) =>
-		$"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
+	private string FormatEntry(string text, LogLevel level) => $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
 
-	private void NewFileName() =>
+	private void NewFileName()
+	{
 		CurrentFileName = Path.Combine(LogDirectory, _started + $".{_fileCounter++}" + Extension);
+		_entriesCounter = 0;
+	}
 
 	private void AppendToFile(Span<string> logEntries)
 	{
