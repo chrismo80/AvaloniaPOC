@@ -62,13 +62,15 @@ public class FileLogger : BaseService, ILogger
 		if (level < LogLevel)
 			return;
 
-		string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
+		var entry = FormatEntry(text, level);
 
-		_cache.Enqueue(logEntry);
+		_cache.Enqueue(entry);
 	}
 
 	protected override void OnDisposing()
 	{
+		FlushCache();
+
 		if (!_flushTimer.Enabled)
 			return;
 
@@ -115,13 +117,34 @@ public class FileLogger : BaseService, ILogger
 	{
 		AppendToFile(entries[..spaceLeft]);
 
-		CurrentFileName = Path.Combine(LogDirectory, _started + $".{_fileCounter++}" + Extension);
+		NewFileName();
 
 		_entriesCounter = 0;
 
 		return entries[spaceLeft..];
 	}
 
-	private void AppendToFile(Span<string> logEntries) =>
-		File.AppendAllLines(CurrentFileName, logEntries.ToArray());
+	private string FormatEntry(string text, LogLevel level) =>
+		$"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
+
+	private void NewFileName() =>
+		CurrentFileName = Path.Combine(LogDirectory, _started + $".{_fileCounter++}" + Extension);
+
+	private void AppendToFile(Span<string> logEntries)
+	{
+		try
+		{
+			File.AppendAllLines(CurrentFileName, logEntries.ToArray());
+		}
+		catch (IOException ex)
+		{
+			string exEntry = FormatEntry(ex.ToString(), LogLevel.Error);
+
+			// try new file name
+			NewFileName();
+
+			File.AppendAllText(CurrentFileName, exEntry + Environment.NewLine);
+			File.AppendAllLines(CurrentFileName, logEntries.ToArray());
+		}
+	}
 }
