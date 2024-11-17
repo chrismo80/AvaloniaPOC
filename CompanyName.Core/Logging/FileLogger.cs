@@ -1,10 +1,12 @@
-﻿namespace CompanyName.Core.Logging;
+﻿using System.Collections.Concurrent;
+
+namespace CompanyName.Core.Logging;
 
 public class FileLogger : BaseService, ILogger
 {
 	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	private readonly List<string> _cache = new(1000);
+	private readonly ConcurrentQueue<string> _cache = new();
 	private readonly object _lock = new();
 
 	private readonly System.Timers.Timer _flushTimer = new();
@@ -63,47 +65,44 @@ public class FileLogger : BaseService, ILogger
 
 		string logEntry = $"{DateTime.Now:HH:mm:ss.fff}\t{level,-12}\t{text}";
 
-		lock (_lock)
-		{
-			_cache.Add(logEntry);
-		}
+		_cache.Enqueue(logEntry);
 	}
 
 	protected override void OnDisposing()
 	{
+		if (!_flushTimer.Enabled)
+			return;
+
 		_flushTimer.Stop();
 		_flushTimer.Dispose();
 	}
 
 	private void FlushCache()
 	{
-		if (_cache.Count > 0)
-			WriteEntriesToFiles(RetrieveAndClearCache());
+		if (_cache.IsEmpty)
+			return;
+
+		var entries = ReadCache();
+
+		WriteEntries(entries);
 	}
 
-	private Span<string> RetrieveAndClearCache()
+	private Span<string> ReadCache()
 	{
-		string[] entriesToWrite;
+		var entriesToWrite = new List<string>(_cache.Count);
 
-		lock (_lock)
-		{
-			entriesToWrite = _cache.ToArray();
-			_cache.Clear();
-		}
+		while (_cache.TryDequeue(out var logEntry))
+			entriesToWrite.Add(logEntry);
 
-		return entriesToWrite.AsSpan();
+		return entriesToWrite.ToArray().AsSpan();
 	}
 
-	private void WriteEntriesToFiles(Span<string> entries)
+	private void WriteEntries(Span<string> entries)
 	{
 		int spaceLeft;
 
 		while ((spaceLeft = MaxEntriesPerFile - _entriesCounter) < entries.Length)
-		{
-			WriteToFile(entries[..spaceLeft]);
-			NewLogFile();
-			entries = entries[spaceLeft..];
-		}
+			entries = FinishCurrentFile(entries, spaceLeft);
 
 		if (entries.IsEmpty)
 			return;
@@ -113,10 +112,15 @@ public class FileLogger : BaseService, ILogger
 		WriteToFile(entries);
 	}
 
-	private void NewLogFile()
+	private Span<string> FinishCurrentFile(Span<string> entries, int spaceLeft)
 	{
+		WriteToFile(entries[..spaceLeft]);
+
 		CurrentFileName = Path.Combine(LogDirectory, _sessionStarted + $".{_fileCounter++}" + Extension);
+
 		_entriesCounter = 0;
+
+		return entries[spaceLeft..];
 	}
 
 	private void WriteToFile(Span<string> logEntries) =>
