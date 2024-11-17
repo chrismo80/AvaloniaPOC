@@ -4,11 +4,12 @@ public class FileLogger : BaseService, ILogger
 {
 	readonly string _sessionStarted = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
-	private readonly List<string> _cache = [];
+	private readonly List<string> _cache = new(1000);
 	private readonly object _lock = new();
 
 	private readonly System.Timers.Timer _flushTimer = new();
 
+	int _fileCounter = 1;
 	int _entriesCounter;
 
 	public string LogDirectory { get; } = "Logs";
@@ -44,6 +45,17 @@ public class FileLogger : BaseService, ILogger
 	{
 	}
 
+	internal void Init()
+	{
+		Directory.CreateDirectory(LogDirectory);
+
+		CurrentFileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
+
+		_flushTimer.Elapsed += (_, _) => FlushCache();
+		_flushTimer.Interval = FlushInterval;
+		_flushTimer.Start();
+	}
+
 	public void Log(string text, LogLevel level = LogLevel.Debug)
 	{
 		if (level < LogLevel)
@@ -65,9 +77,12 @@ public class FileLogger : BaseService, ILogger
 
 	private void FlushCache()
 	{
-		if (_cache.Count == 0)
-			return;
+		if (_cache.Count > 0)
+			WriteEntriesToFiles(RetrieveAndClearCache());
+	}
 
+	private Span<string> RetrieveAndClearCache()
+	{
 		string[] entriesToWrite;
 
 		lock (_lock)
@@ -76,18 +91,17 @@ public class FileLogger : BaseService, ILogger
 			_cache.Clear();
 		}
 
-		var entries = entriesToWrite.AsSpan();
+		return entriesToWrite.AsSpan();
+	}
 
-		while (_entriesCounter + entries.Length > MaxEntriesPerFile)
+	private void WriteEntriesToFiles(Span<string> entries)
+	{
+		int spaceLeft;
+
+		while ((spaceLeft = MaxEntriesPerFile - _entriesCounter) < entries.Length)
 		{
-			int spaceLeft = MaxEntriesPerFile - _entriesCounter;
-
 			WriteToFile(entries[..spaceLeft]);
-
-			// start new log file
-			CurrentFileName = GetNextFileName();
-			_entriesCounter = 0;
-
+			NewLogFile();
 			entries = entries[spaceLeft..];
 		}
 
@@ -99,35 +113,12 @@ public class FileLogger : BaseService, ILogger
 		WriteToFile(entries);
 	}
 
-	private void WriteToFile(Span<string> logEntries)
+	private void NewLogFile()
 	{
+		CurrentFileName = Path.Combine(LogDirectory, _sessionStarted + $".{_fileCounter++}" + Extension);
+		_entriesCounter = 0;
+	}
+
+	private void WriteToFile(Span<string> logEntries) =>
 		File.AppendAllLines(CurrentFileName, logEntries.ToArray());
-	}
-
-	private string GetNextFileName()
-	{
-		var fileName = Path.Combine(LogDirectory, _sessionStarted + Extension);
-
-		if (!File.Exists(fileName))
-			return fileName;
-
-		int i = 1;
-
-		while (File.Exists(fileName))
-			fileName = Path.Combine(LogDirectory, _sessionStarted + $".{i++}" + Extension);
-
-		return fileName;
-	}
-
-	internal void Init()
-	{
-		Directory.CreateDirectory(LogDirectory);
-
-		CurrentFileName = GetNextFileName();
-
-		_flushTimer.Elapsed += (_, _) => FlushCache();
-		_flushTimer.Interval = FlushInterval;
-		_flushTimer.AutoReset = true;
-		_flushTimer.Start();
-	}
 }
