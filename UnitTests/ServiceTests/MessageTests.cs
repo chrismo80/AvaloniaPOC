@@ -69,7 +69,6 @@ public class MessageTests : ServiceTests<MessageManager>
 	}
 
 	[TestMethod]
-	[DoNotParallelize]
 	public void CreateMessage_ExceptionMessage_Success()
 	{
 		this.CreateMessage(new Exception("Test"));
