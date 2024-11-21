@@ -3,24 +3,8 @@ using CompanyName.Core.Logging;
 namespace UnitTests.ServiceTests;
 
 [TestClass]
-public class FileLoggerTests : ServiceTests<FileLogger>
+public class LoggingTests : ServiceTests<FileLogger>
 {
-	protected override void Pre()
-	{
-		Sut.FlushInterval = 42;
-		Sut.Init();
-
-		// this enables logging via object extension
-		Sut.ConfigureTraceExtensions();
-	}
-
-	protected override void Post()
-	{
-		// remove log dir, because all unit tests use the same dir, must be clean
-		if (Directory.Exists(Sut.LogDirectory))
-			Directory.Delete(Sut.LogDirectory, true);
-	}
-
 	[TestMethod]
 	[DoNotParallelize]
 	[DataRow(LogLevel.Trace, 27)]
@@ -140,6 +124,34 @@ public class FileLoggerTests : ServiceTests<FileLogger>
 			this.Trace(ex);
 
 		Assert.AreEqual((files, entries * 3), CountFilesAndEntries());
+	}
+
+	[TestMethod]
+	[DoNotParallelize]
+	public void TraceWatch_SimpleCall_VerifyLoggedRowCount()
+	{
+		using (var tw = new TraceWatch(this))
+		{
+			Assert.AreEqual((1, 1), CountFilesAndEntries());
+		}
+
+		Assert.AreEqual((1, 2), CountFilesAndEntries());
+	}
+
+	protected override void Pre()
+	{
+		Sut.FlushInterval = 42;
+		Sut.Init();
+
+		// this enables logging via object extension
+		Sut.ConfigureTraceExtensions();
+	}
+
+	protected override void Post()
+	{
+		// remove log dir, because all unit tests use the same dir, must be clean
+		if (Directory.Exists(Sut.LogDirectory))
+			Directory.Delete(Sut.LogDirectory, true);
 	}
 
 	private (int Files, int Entries) CountFilesAndEntries()

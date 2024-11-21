@@ -9,27 +9,27 @@ namespace CompanyName.UI.Devices;
 
 public abstract class CameraDevice : BaseDevice
 {
-    public string CameraName { get; }
+	public string CameraName { get; }
 
-    protected CameraDevice(string cameraName)
-    {
-        CameraName = cameraName;
-        Name += " - " + CameraName;
-    }
+	protected CameraDevice(string cameraName)
+	{
+		CameraName = cameraName;
+		Name += " - " + CameraName;
+	}
 
-    public async Task<Bitmap> GrabImage()
-    {
-        using var tw = new TraceWatch(this);
+	public async Task<Bitmap> GrabImage()
+	{
+		using var tw = new TraceWatch(this);
 
-        await Task.Delay(2000);
+		await Task.Delay(2000);
 
-        Executions++;
+		Executions++;
 
-        this.CreateMessage("Image grabbed", MessageType.Information);
+		this.CreateMessage("Image grabbed", MessageType.Information);
 
-        if (Executions == 3)
-            Online = false;
+		if (Executions == 3)
+			Online = false;
 
-        return new Bitmap(1, 1);
-    }
+		return new Bitmap(1, 1);
+	}
 }

@@ -46,6 +46,16 @@ public class FileLogger : BaseService, ILogger
 	{
 	}
 
+	public void Log(string text, LogLevel level = LogLevel.Debug)
+	{
+		if (level < LogLevel)
+			return;
+
+		var entry = FormatEntry(text, level);
+
+		_cache.Enqueue(entry);
+	}
+
 	internal void Init()
 	{
 		Directory.CreateDirectory(LogDirectory);
@@ -55,16 +65,6 @@ public class FileLogger : BaseService, ILogger
 		_flushTimer.Elapsed += (_, _) => FlushCache();
 		_flushTimer.Interval = FlushInterval;
 		_flushTimer.Start();
-	}
-
-	public void Log(string text, LogLevel level = LogLevel.Debug)
-	{
-		if (level < LogLevel)
-			return;
-
-		var entry = FormatEntry(text, level);
-
-		_cache.Enqueue(entry);
 	}
 
 	protected override void OnDisposing()
