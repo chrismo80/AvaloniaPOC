@@ -1,33 +1,38 @@
-﻿using CompanyName.Core.Messages;
+﻿using CompanyName.Core.Logging;
+using CompanyName.Core.Messages;
 using CompanyName.Core.Devices;
 
 namespace CompanyName.UI.Devices;
 
 public abstract class IlluminationDevice : BaseDevice
 {
-	public string ComPort { get; }
+    public string ComPort { get; }
 
-	protected IlluminationDevice(string comPort)
-	{
-		ComPort = comPort;
-		Name += " - " + ComPort;
-	}
+    protected IlluminationDevice(string comPort)
+    {
+        ComPort = comPort;
+        Name += " - " + ComPort;
+    }
 
-	public async Task ActivateIllumination()
-	{
-		await Task.Delay(1000);
+    public async Task ActivateIllumination()
+    {
+        using var tw = new TraceWatch(this);
 
-		Executions++;
+        await Task.Delay(1000);
 
-		this.CreateMessage("Illumination on", MessageType.Information);
-	}
+        Executions++;
 
-	public async Task DeactivateIllumination()
-	{
-		await Task.Delay(1000);
+        this.CreateMessage("Illumination on", MessageType.Information);
+    }
 
-		Executions++;
+    public async Task DeactivateIllumination()
+    {
+        using var tw = new TraceWatch(this);
 
-		this.CreateMessage("Illumination off", MessageType.Information);
-	}
+        await Task.Delay(1000);
+
+        Executions++;
+
+        this.CreateMessage("Illumination off", MessageType.Information);
+    }
 }

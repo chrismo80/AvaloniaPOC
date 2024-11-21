@@ -1,21 +1,24 @@
 ﻿using CompanyName.Core.Messages;
 using CompanyName.Core.Devices;
 using CompanyName.Core.Models;
+using CompanyName.Core.Logging;
 
 namespace CompanyName.UI.Devices;
 
 public abstract class SyncDevice(string plcRoot, IExecutable model) : BaseDevice
 {
-	public string PlcRoot { get; } = plcRoot;
+    public string PlcRoot { get; } = plcRoot;
 
-	public IExecutable Model { get; } = model;
+    public IExecutable Model { get; } = model;
 
-	public async void TriggerInspection()
-	{
-		await Model.Execute();
+    public async void TriggerInspection()
+    {
+        using var tw = new TraceWatch(this);
 
-		Executions++;
+        await Model.Execute();
 
-		this.CreateMessage("Model.Execute done", MessageType.Information);
-	}
+        Executions++;
+
+        this.CreateMessage("Model.Execute done", MessageType.Information);
+    }
 }

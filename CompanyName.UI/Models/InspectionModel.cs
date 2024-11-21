@@ -1,4 +1,5 @@
 ﻿using CompanyName.Core.Data;
+using CompanyName.Core.Logging;
 using CompanyName.Core.Messages;
 using CompanyName.Core.Models;
 using CompanyName.UI.Devices;
@@ -7,40 +8,42 @@ namespace CompanyName.UI.Models;
 
 public abstract class InspectionModel : BaseModel
 {
-	readonly IParameterManager _parameterManager;
-	readonly string _imagingModuleName = "";
+    readonly IParameterManager _parameterManager;
+    readonly string _imagingModuleName = "";
 
-	public IlluminationDevice LedController { get; set; }
+    public IlluminationDevice LedController { get; set; }
 
-	public CameraDevice Camera { get; set; }
+    public CameraDevice Camera { get; set; }
 
-	public int Executions { get; set; }
+    public int Executions { get; set; }
 
-	public string Name { get; set; }
+    public string Name { get; set; }
 
-	protected InspectionModel(CameraDevice camera, IlluminationDevice ledController,
-		IParameterManager paramManager, string imagingModuleName)
-	{
-		Name = GetType().Name;
-		Camera = camera;
-		LedController = ledController;
+    protected InspectionModel(CameraDevice camera, IlluminationDevice ledController,
+        IParameterManager paramManager, string imagingModuleName)
+    {
+        Name = GetType().Name;
+        Camera = camera;
+        LedController = ledController;
 
-		_parameterManager = paramManager;
-		_imagingModuleName = imagingModuleName;
-	}
+        _parameterManager = paramManager;
+        _imagingModuleName = imagingModuleName;
+    }
 
-	public override async Task Execute()
-	{
-		await LedController.ActivateIllumination();
+    public override async Task Execute()
+    {
+        using var tw = new TraceWatch(this);
 
-		await Camera.GrabImage();
+        await LedController.ActivateIllumination();
 
-		_ = LedController.DeactivateIllumination();
+        await Camera.GrabImage();
 
-		this.CreateMessage("Inspection done", MessageType.Information);
+        _ = LedController.DeactivateIllumination();
 
-		Executions++;
+        this.CreateMessage("Inspection done", MessageType.Information);
 
-		OnPropertyChanged(nameof(Executions));
-	}
+        Executions++;
+
+        OnPropertyChanged(nameof(Executions));
+    }
 }
