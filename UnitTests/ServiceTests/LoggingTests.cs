@@ -65,7 +65,7 @@ public class LoggingTests : ServiceTests<FileLogger>
 	[TestMethod]
 	[DoNotParallelize]
 	[DataRow(1_000, 500, 1)]
-	public void Log_Concurrency_NoRaceConditions(
+	public async Task Log_Concurrency_NoRaceConditions(
 		int maxEntries, int entries, int files)
 	{
 		Sut.MaxEntriesPerFile = maxEntries;
@@ -87,7 +87,7 @@ public class LoggingTests : ServiceTests<FileLogger>
 		trigger.SetResult();
 
 		// Wait for all tasks to be finished
-		Task.WhenAll(tasks).Wait();
+		await Task.WhenAll(tasks);
 
 		Assert.AreEqual((files, entries), CountFilesAndEntries());
 	}
