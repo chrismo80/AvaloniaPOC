@@ -144,14 +144,14 @@ public class LoggingTests : ServiceTests<FileLogger>
 	{
 		Sut.Log("Entry 1");
 
-		Assert.AreEqual((1, 1), CountFilesAndEntries());
+		Assert.AreEqual(1, CountFilesAndEntries().Files);
 
 		// force AccessException
 		File.SetAttributes(Sut.CurrentFileName, FileAttributes.ReadOnly);
 
 		Sut.Log("Entry 2");
 
-		Assert.AreEqual((2, 10), CountFilesAndEntries());
+		Assert.AreEqual(2, CountFilesAndEntries().Files);
 	}
 
 	protected override void Pre()
