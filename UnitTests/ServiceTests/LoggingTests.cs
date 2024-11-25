@@ -138,6 +138,22 @@ public class LoggingTests : ServiceTests<FileLogger>
 		Assert.AreEqual((1, 2), CountFilesAndEntries());
 	}
 
+	[TestMethod]
+	[DoNotParallelize]
+	public void AppendToFile_HandleException_NewFileCreated()
+	{
+		Sut.Log("Entry 1");
+
+		Assert.AreEqual((1, 1), CountFilesAndEntries());
+
+		// force AccessException
+		File.SetAttributes(Sut.CurrentFileName, FileAttributes.ReadOnly);
+
+		Sut.Log("Entry 2");
+
+		Assert.AreEqual((2, 10), CountFilesAndEntries());
+	}
+
 	protected override void Pre()
 	{
 		Sut.FlushInterval = 42;
@@ -150,8 +166,21 @@ public class LoggingTests : ServiceTests<FileLogger>
 	protected override void Post()
 	{
 		// remove log dir, because all unit tests use the same dir, must be clean
-		if (Directory.Exists(Sut.LogDirectory))
-			Directory.Delete(Sut.LogDirectory, true);
+		CleanUpLogDirectory();
+	}
+
+	private void CleanUpLogDirectory()
+	{
+		if (!Directory.Exists(Sut.LogDirectory))
+			return;
+
+		foreach (var file in Directory.GetFiles(Sut.LogDirectory))
+		{
+			File.SetAttributes(file, FileAttributes.Normal); // Reset attributes
+			File.Delete(file);
+		}
+
+		Directory.Delete(Sut.LogDirectory, true);
 	}
 
 	private (int Files, int Entries) CountFilesAndEntries()

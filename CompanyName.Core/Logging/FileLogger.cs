@@ -136,15 +136,14 @@ public class FileLogger : BaseService, ILogger
 		{
 			File.AppendAllLines(CurrentFileName, logEntries.ToArray());
 		}
-		catch (IOException ex)
+		catch (Exception ex)
 		{
 			string exEntry = FormatEntry(ex.ToString(), LogLevel.Error);
 
 			// try new file name
 			NewFileName();
 
-			File.AppendAllText(CurrentFileName, exEntry + Environment.NewLine);
-			File.AppendAllLines(CurrentFileName, logEntries.ToArray());
+			File.AppendAllLines(CurrentFileName, logEntries.ToArray().Prepend(exEntry));
 		}
 	}
 }
