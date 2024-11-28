@@ -25,7 +25,8 @@ public abstract partial class NavigationPageViewModel : PageViewModel
 			SetPage();
 	}
 
-	public void SelectPage(string page) => SetPage(_pages.Select(p => p.Name).ToList().IndexOf(page));
+	public void SelectPage(string page) =>
+		SetPage(Array.FindIndex(_pages, p => p.Name == page));
 
 	public void PrevPage() => SetPage(_index - 1);
 
