@@ -1,7 +1,6 @@
-namespace UnitTests;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
+
+namespace UnitTests;
 
 public static class TestExtensions
 {
