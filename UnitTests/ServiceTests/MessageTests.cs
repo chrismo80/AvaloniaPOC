@@ -5,73 +5,73 @@ namespace UnitTests.ServiceTests;
 [TestClass]
 public class MessageTests : ServiceTests<MessageManager>
 {
-	protected override void Pre()
-	{
-		Assert.AreEqual(0, Sut.ActiveMessages.Count);
-		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
+    [TestMethod]
+    public void CreateMessage_NewMessage_Success()
+    {
+        Sut.CreateMessage("Message 1", MessageType.Information);
 
-		// this enables message creation via object extension
-		Sut.ConfigureMessageExtensions();
-	}
+        Sut.ActiveMessages.Count.Is(1);
+    }
 
-	[TestMethod]
-	public void CreateMessage_NewMessage_Success()
-	{
-		Sut.CreateMessage("Message 1", MessageType.Information);
+    [TestMethod]
+    public void ArchiveMessage_LastActiveMessage_Success()
+    {
+        Sut.CreateMessage("Message 1", MessageType.Information);
+        Sut.CreateMessage("Message 2", MessageType.Information);
 
-		Assert.AreEqual(1, Sut.ActiveMessages.Count);
-	}
+        Sut.ActiveMessages.Count.Is(2);
+        Sut.ArchivedMessages.Count.Is(0);
 
-	[TestMethod]
-	public void ArchiveMessage_LastActiveMessage_Success()
-	{
-		Sut.CreateMessage("Message 1", MessageType.Information);
-		Sut.CreateMessage("Message 2", MessageType.Information);
+        var message = Sut.ActiveMessages.Last();
 
-		Assert.AreEqual(2, Sut.ActiveMessages.Count);
-		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
+        Sut.Archive(message);
 
-		var message = Sut.ActiveMessages.Last();
+        Sut.ActiveMessages.Count.Is(2);
+        Sut.ArchivedMessages.Count.Is(1);
 
-		Sut.Archive(message);
+        Sut.ArchivedMessages[^1].Is(message);
+    }
 
-		Assert.AreEqual(2, Sut.ActiveMessages.Count);
-		Assert.AreEqual(1, Sut.ArchivedMessages.Count);
+    [TestMethod]
+    public void ConfirmMessage_AfterArchiveMessage_MessageMoved()
+    {
+        Sut.CreateMessage("Message 1", MessageType.Information);
+        Sut.CreateMessage("Message 2", MessageType.Information);
 
-		Assert.AreEqual(message, Sut.ArchivedMessages.Last());
-	}
+        Sut.ActiveMessages.Count.Is(2);
+        Sut.ArchivedMessages.Count.Is(0);
 
-	[TestMethod]
-	public void ConfirmMessage_AfterArchiveMessage_MessageMoved()
-	{
-		Sut.CreateMessage("Message 1", MessageType.Information);
-		Sut.CreateMessage("Message 2", MessageType.Information);
+        var firstMessage = Sut.ActiveMessages[0];
 
-		Assert.AreEqual(2, Sut.ActiveMessages.Count);
-		Assert.AreEqual(0, Sut.ArchivedMessages.Count);
+        Sut.Archive(firstMessage);
+        Sut.Confirm(firstMessage);
 
-		var firstMessage = Sut.ActiveMessages.First();
+        Sut.ActiveMessages.Count.Is(1);
+        Sut.ArchivedMessages.Count.Is(1);
 
-		Sut.Archive(firstMessage);
-		Sut.Confirm(firstMessage);
+        Sut.ArchivedMessages[^1].Is(firstMessage);
+    }
 
-		Assert.AreEqual(1, Sut.ActiveMessages.Count);
-		Assert.AreEqual(1, Sut.ArchivedMessages.Count);
+    [TestMethod]
+    public void CreateMessage_WithExtension_Success()
+    {
+        this.CreateMessage("Message", MessageType.Information);
+        Sut.ActiveMessages.Count.Is(1);
+    }
 
-		Assert.AreEqual(firstMessage, Sut.ArchivedMessages.Last());
-	}
+    [TestMethod]
+    public void CreateMessage_ExceptionMessage_Success()
+    {
+        this.CreateMessage(new Exception("Test"));
+        Sut.ActiveMessages.Count.Is(1);
+    }
 
-	[TestMethod]
-	public void CreateMessage_WithExtension_Success()
-	{
-		this.CreateMessage("Message", MessageType.Information);
-		Assert.AreEqual(1, Sut.ActiveMessages.Count);
-	}
+    protected override void Pre()
+    {
+        Sut.ActiveMessages.Count.Is(0);
+        Sut.ArchivedMessages.Count.Is(0);
 
-	[TestMethod]
-	public void CreateMessage_ExceptionMessage_Success()
-	{
-		this.CreateMessage(new Exception("Test"));
-		Assert.AreEqual(1, Sut.ActiveMessages.Count);
-	}
+        // this enables message creation via object extension
+        Sut.ConfigureMessageExtensions();
+    }
 }
