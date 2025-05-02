@@ -25,7 +25,7 @@ public static class TestExtensions
 	/// use with caution for nested arrays, may lead to false positives
 	/// </summary>
 	/// <returns>the inner enumerable as array of the first element</returns>
-	private static object[]? Unwrap(this object[] array) =>
+	private static object[] Unwrap(this object[] array) =>
 		array is [IEnumerable list and not string] ? list.ToEnumerable().ToArray() : array;
 
 	private static IEnumerable<object> ToEnumerable(this object list)
@@ -35,18 +35,17 @@ public static class TestExtensions
 		return (list as IEnumerable).Cast<object>();
 	}
 
-	/// <summary>
+	/// <summary>^
 	/// checks each value of the lists on equality
 	/// (uses recursion for nested lists)
 	/// </summary>
 	private static bool Are(this IEnumerable<object> values, IEnumerable<object> expected)
 	{
-		var (valuesList, expectedList) = (values.ToList(), expected.ToList());
+		var (list1, list2) = (values.ToList(), expected.ToList());
 
-		Assert.AreEqual(expectedList.Count, valuesList.Count,
-			$"Count mismatch\n{valuesList.Format()} != {expectedList.Format()}");
+		Assert.AreEqual(list2.Count, list1.Count, $"Count mismatch\n{list1.Format()} != {list2.Format()}");
 
-		return Enumerable.Range(0, expectedList.Count).All(i => valuesList[i].Is(expectedList[i]));
+		return Enumerable.Range(0, list2.Count).All(i => list1[i].Is(list2[i]));
 	}
 
 	private static bool IsEqualTo(this object? value, object? expected)
@@ -136,30 +135,15 @@ public class TestExtensionTests
 		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
 
 	[TestMethod]
-	public void JaggedArrays_Equals_Expected()
-	{
-		var values = new object[] { new int[] { 1, 2 }, 3 };
-		var expected = new object[] { new int[] { 1, 2 }, 3 };
-
-		values.Is(expected);
-	}
+	public void JaggedArrays_Equals_Expected() =>
+		new object[] { new[] { 1, 2 }, 3 }.Is(new object[] { new[] { 1, 2 }, 3 });
 
 	[TestMethod]
-	public void DifferentDepth_EqualsThough_Expected()
-	{
-		var values = new List<object> { 1, 2 };
-		var expected = new List<object> { 1, new List<object> { 2 } };
-
-		values.Is(expected);
-	}
+	public void DifferentDepth_EqualsThough_Expected() =>
+		new List<object> { 1, 2 }.Is(new List<object> { 1, new List<object> { 2 } });
 
 	[ExpectedException(typeof(AssertFailedException))]
 	[TestMethod]
-	public void Value_NotEquals_List()
-	{
-		var value = 5;
-		var expected = new List<int> { 1, 2 };
-
-		value.Is(expected);
-	}
+	public void Value_NotEquals_List() =>
+		5.Is(new List<int> { 1, 2 });
 }
