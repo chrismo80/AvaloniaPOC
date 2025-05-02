@@ -22,26 +22,46 @@ public static class TestExtensions
         };
     }
 
-    private static object[]? Unwrap(this object[]? array)
-    {   // unwraps inner array of first element (due to params usage)
-        if (array?.Length == 1 && array[0] is IEnumerable list && array[0] is not string)
+    /// <summary>
+    /// unwraps inner array of first element (due to params usage)
+    /// use with caution for nested arrays, may lead to false positives
+    /// </summary>
+    /// <returns>the inner enumerable as array of the first element</returns>
+    private static object[]? Unwrap(this object[] array)
+    {
+        if (array?.Length == 1 && array[0] is IEnumerable list && list is not string) // char[]
             return list.ToEnumerable().ToArray();
 
         return array;
     }
 
-    private static IEnumerable<object> ToEnumerable(this object list) =>
-        (list as IEnumerable).Cast<object>();
+    private static IEnumerable<object> ToEnumerable(this object list)
+    {
+        Assert.IsInstanceOfType(list, typeof(IEnumerable), $"{list} is not an IEnumerable");
 
-    private static bool Are(this IEnumerable<object> values, IEnumerable<object> expected) =>
-        Enumerable.Range(0, Math.Max(values.Count(), expected.Count()))
-            .All(i => values.ElementAt(i).Is(expected.ElementAt(i)));
+        return (list as IEnumerable).Cast<object>();
+    }
+
+    /// <summary>
+    /// checks each value of the lists on equality
+    /// (uses recursion for nested lists)
+    /// </summary>
+    private static bool Are(this IEnumerable<object> values, IEnumerable<object> expected)
+    {
+        var (valuesList, expectedList) = (values.ToList(), expected.ToList());
+
+        Assert.AreEqual(expectedList.Count, valuesList.Count, $"Count mismatch\n{expected.Format()} != {values.Format()}");
+
+        return Enumerable.Range(0, expectedList.Count).All(i => valuesList[i].Is(expectedList[i]));
+    }
 
     private static bool IsEqualTo(this object? value, object? expected)
     {
         Assert.AreEqual(expected, value);
         return true;
     }
+
+    private static string Format(this IEnumerable<object> values) => string.Join("|", values);
 }
 
 [TestClass]
@@ -111,12 +131,40 @@ public class TestExtensionTests
         new int[] { 1, 2, 3, 5 }.Is(1, 2, 3, 4);
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
+    [ExpectedException(typeof(AssertFailedException))]
     public void IEnumerable_Not_Equal_Params_TooLong() =>
         new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4);
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
+    [ExpectedException(typeof(AssertFailedException))]
     public void IEnumerable_Not_Equal_Params_TooShort() =>
         new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
+
+    [TestMethod]
+    public void JaggedArrays_Equals_Expected()
+    {
+        var values = new object[] { new int[] { 1, 2 }, 3 };
+        var expected = new object[] { new int[] { 1, 2 }, 3 };
+
+        values.Is(expected);
+    }
+
+    [TestMethod]
+    public void DifferentDepth_EqualsThough_Expected()
+    {
+        var values = new List<object> { 1, 2 };
+        var expected = new List<object> { 1, new List<object> { 2 } };
+
+        values.Is(expected);
+    }
+
+    [ExpectedException(typeof(AssertFailedException))]
+    [TestMethod]
+    public void Value_NotEquals_List()
+    {
+        var value = 5;
+        var expected = new List<int> { 1, 2 };
+
+        value.Is(expected);
+    }
 }
