@@ -2,6 +2,8 @@ using System.Collections;
 
 namespace UnitTests;
 
+public class IsNotException(string message) : Exception(message);
+
 public static class TestExtensions
 {
 	/// <summary>
@@ -41,18 +43,23 @@ public static class TestExtensions
 	private static string Format(this IEnumerable<object> values) =>
 		$"[{string.Join(", ", values)}]";
 
+	private static string Format(this object? value) =>
+		value is null ? "NULL" : $"{value} ({value?.GetType()})";
+
 	private static IEnumerable<object> ToEnumerable(this object list)
 	{
-		Assert.IsInstanceOfType(list, typeof(IEnumerable), $"{list} is not an IEnumerable");
+		if (list is IEnumerable enumerable)
+			return enumerable.Cast<object>();
 
-		return (list as IEnumerable).Cast<object>();
+		throw new IsNotException($"{list} is not an IEnumerable");
 	}
 
 	private static bool IsEqualTo(this object? value, object? expected, string? message = null)
 	{
-		Assert.AreEqual(expected, value, message ?? $"{value} is not {expected}");
+		if (EqualityComparer<object>.Default.Equals(expected, value))
+			return true;
 
-		return true;
+		throw new IsNotException(message ?? $"{value.Format()} is not {expected.Format()}");
 	}
 }
 
@@ -70,7 +77,7 @@ public class TestExtensionTests
 	public void Value_Equals_Expected(object value, object expected) =>
 		value.Is(expected);
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	[DataRow(null, true)]
 	[DataRow(null, false)]
@@ -110,22 +117,22 @@ public class TestExtensionTests
 	public void ValuesWithNull_Equal_Expected() =>
 		new int?[] { 1, 2, null, 4 }.Is(1, 2, null, 4);
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	public void List_Not_Equal_List() =>
 		new List<int> { 1, 2, 3, 5 }.Is(new List<int> { 1, 2, 3, 4 });
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	public void Array_Not_Equal_Params() =>
 		new int[] { 1, 2, 3, 5 }.Is(1, 2, 3, 4);
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	public void IEnumerable_Not_Equal_Params_TooLong() =>
 		new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4);
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	public void IEnumerable_Not_Equal_Params_TooShort() =>
 		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
@@ -138,7 +145,7 @@ public class TestExtensionTests
 	public void DifferentDepth_EqualsThough_Expected() =>
 		new List<object> { 1, 2 }.Is(new List<object> { 1, new List<object> { 2 } });
 
-	[ExpectedException(typeof(AssertFailedException))]
+	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
 	public void Value_NotEquals_List() =>
 		5.Is(new List<int> { 1, 2 });
