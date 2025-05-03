@@ -54,9 +54,9 @@ public static class IsExtension
 		throw new IsNotException($"{list} is not an IEnumerable");
 	}
 
-	private static bool IsEqualTo(this object? value, object? expected, string? message = null)
+	private static bool IsEqualTo<T>(this T? value, T? expected, string? message = null)
 	{
-		if (EqualityComparer<object>.Default.Equals(expected, value))
+		if (EqualityComparer<T>.Default.Equals(expected, value))
 			return true;
 
 		throw new IsNotException(message ?? $"{value.Format()} is not {expected.Format()}");
