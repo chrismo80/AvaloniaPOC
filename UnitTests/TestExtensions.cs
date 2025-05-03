@@ -16,7 +16,7 @@ public static class TestExtensions
 		{
 			null => value.IsEqualTo(expected),
 			1 => value.IsEqualTo(expected[0]),
-			_ => value.ToEnumerable().ToList().Are(expected.ToList())
+			_ => value.ToEnumerable().ToArray().Are(expected)
 		};
 	}
 
@@ -32,11 +32,11 @@ public static class TestExtensions
 	/// checks each value of the lists on equality
 	/// (uses recursion for nested lists)
 	/// </summary>
-	private static bool Are(this List<object> values, List<object> expected) =>
-		values.CountMatch(expected) && Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
+	private static bool Are(this object[] values, object[] expected) =>
+		values.SameSize(expected) && Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
 
-	private static bool CountMatch(this List<object> values, List<object> expected) =>
-		values.Count.IsEqualTo(expected.Count, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
+	private static bool SameSize(this object[] values, object[] expected) =>
+		values.Length.IsEqualTo(expected.Length, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
 
 	private static string Format(this IEnumerable<object> values) =>
 		$"[{string.Join(", ", values)}]";
