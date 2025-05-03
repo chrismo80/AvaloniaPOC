@@ -21,20 +21,25 @@ public static class TestExtensions
 	}
 
 	/// <summary>
-	/// checks each value of the lists on equality
-	/// (uses recursion for nested lists)
-	/// </summary>
-	public static bool Are(this List<object> values, List<object> expected) =>
-		values.Count.IsEqualTo(expected.Count, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}") &&
-		Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
-
-	/// <summary>
 	/// unwraps inner array of first element (due to params usage)
 	/// use with caution for nested arrays, may lead to false positives
 	/// </summary>
 	/// <returns>the inner enumerable as array of the first element</returns>
 	private static object[] Unwrap(this object[] array) =>
 		array is [IEnumerable list and not string] ? list.ToEnumerable().ToArray() : array;
+
+	/// <summary>
+	/// checks each value of the lists on equality
+	/// (uses recursion for nested lists)
+	/// </summary>
+	private static bool Are(this List<object> values, List<object> expected) =>
+		values.CountMatch(expected) && Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
+
+	private static bool CountMatch(this List<object> values, List<object> expected) =>
+		values.Count.IsEqualTo(expected.Count, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
+
+	private static string Format(this IEnumerable<object> values) =>
+		$"[{string.Join(", ", values)}]";
 
 	private static IEnumerable<object> ToEnumerable(this object list)
 	{
@@ -49,8 +54,6 @@ public static class TestExtensions
 
 		return true;
 	}
-
-	private static string Format(this IEnumerable<object> values) => $"[{string.Join(", ", values)}]";
 }
 
 [TestClass]
@@ -88,21 +91,15 @@ public class TestExtensionTests
 	}
 
 	[TestMethod]
-	public void ListValues_Equal_Expected()
-	{
-		var values = new List<int> { 1, 2, 3, 4 };
-
-		values.Is(new int[] { 1, 2, 3, 4 });
-		values.Is(new List<int> { 1, 2, 3, 4 });
-		values.Is(1, 2, 3, 4);
-		values.Where(i => i % 2 == 0).Is(2, 4);
-	}
+	public void ListValues_Equal_Expected() =>
+		VerifyEquality(new List<int> { 1, 2, 3, 4 });
 
 	[TestMethod]
-	public void ArrayValues_Equal_Expected()
-	{
-		var values = new int[] { 1, 2, 3, 4 };
+	public void ArrayValues_Equal_Expected() =>
+		VerifyEquality(new int[] { 1, 2, 3, 4 });
 
+	private void VerifyEquality(IEnumerable<int> values)
+	{
 		values.Is(new int[] { 1, 2, 3, 4 });
 		values.Is(new List<int> { 1, 2, 3, 4 });
 		values.Is(1, 2, 3, 4);
