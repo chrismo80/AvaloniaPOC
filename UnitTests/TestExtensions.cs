@@ -16,8 +16,20 @@ public static class TestExtensions
 		{
 			null => value.IsEqualTo(expected),
 			1 => value.IsEqualTo(expected[0]),
-			_ => value.ToEnumerable().Are(expected)
+			_ => value.ToEnumerable().ToList().Are(expected.ToList())
 		};
+	}
+
+	/// <summary>
+	/// checks each value of the lists on equality
+	/// (uses recursion for nested lists)
+	/// </summary>
+	public static bool Are(this List<object> values, List<object> expected)
+	{
+		values.Count.IsEqualTo(expected.Count,
+			$"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
+
+		return Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
 	}
 
 	/// <summary>
@@ -30,32 +42,21 @@ public static class TestExtensions
 
 	private static IEnumerable<object> ToEnumerable(this object list)
 	{
-		Assert.IsInstanceOfType(list, typeof(IEnumerable), $"{list} is not an IEnumerable");
+		Assert.IsInstanceOfType(list, typeof(IEnumerable),
+			$"{list} is not an IEnumerable");
 
 		return (list as IEnumerable).Cast<object>();
 	}
 
-	/// <summary>^
-	/// checks each value of the lists on equality
-	/// (uses recursion for nested lists)
-	/// </summary>
-	private static bool Are(this IEnumerable<object> values, IEnumerable<object> expected)
+	private static bool IsEqualTo(this object? value, object? expected, string? message = null)
 	{
-		var (list1, list2) = (values.ToList(), expected.ToList());
-
-		Assert.AreEqual(list2.Count, list1.Count, $"Count mismatch\n{list1.Format()} != {list2.Format()}");
-
-		return Enumerable.Range(0, list2.Count).All(i => list1[i].Is(list2[i]));
-	}
-
-	private static bool IsEqualTo(this object? value, object? expected)
-	{
-		Assert.AreEqual(expected, value);
+		Assert.AreEqual(expected, value,
+			message ?? $"{value} is not {expected}");
 
 		return true;
 	}
 
-	private static string Format(this IEnumerable<object> values) => string.Join("|", values);
+	private static string Format(this IEnumerable<object> values) => $"[{string.Join(", ", values)}]";
 }
 
 [TestClass]
@@ -72,8 +73,8 @@ public class TestExtensionTests
 	public void Value_Equals_Expected(object value, object expected) =>
 		value.Is(expected);
 
-	[TestMethod]
 	[ExpectedException(typeof(AssertFailedException))]
+	[TestMethod]
 	[DataRow(null, true)]
 	[DataRow(null, false)]
 	[DataRow(true, false)]
@@ -114,23 +115,23 @@ public class TestExtensionTests
 		values.Where(i => i % 2 == 0).Is(2, 4);
 	}
 
-	[TestMethod]
 	[ExpectedException(typeof(AssertFailedException))]
+	[TestMethod]
 	public void List_Not_Equal_List() =>
 		new List<int> { 1, 2, 3, 5 }.Is(new List<int> { 1, 2, 3, 4 });
 
-	[TestMethod]
 	[ExpectedException(typeof(AssertFailedException))]
+	[TestMethod]
 	public void Array_Not_Equal_Params() =>
 		new int[] { 1, 2, 3, 5 }.Is(1, 2, 3, 4);
 
-	[TestMethod]
 	[ExpectedException(typeof(AssertFailedException))]
+	[TestMethod]
 	public void IEnumerable_Not_Equal_Params_TooLong() =>
 		new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4);
 
-	[TestMethod]
 	[ExpectedException(typeof(AssertFailedException))]
+	[TestMethod]
 	public void IEnumerable_Not_Equal_Params_TooShort() =>
 		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
 
