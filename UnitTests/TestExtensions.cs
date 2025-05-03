@@ -24,13 +24,9 @@ public static class TestExtensions
 	/// checks each value of the lists on equality
 	/// (uses recursion for nested lists)
 	/// </summary>
-	public static bool Are(this List<object> values, List<object> expected)
-	{
-		values.Count.IsEqualTo(expected.Count,
-			$"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
-
-		return Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
-	}
+	public static bool Are(this List<object> values, List<object> expected) =>
+		values.Count.IsEqualTo(expected.Count, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}") &&
+		Enumerable.Range(0, expected.Count).All(i => values[i].Is(expected[i]));
 
 	/// <summary>
 	/// unwraps inner array of first element (due to params usage)
@@ -42,16 +38,14 @@ public static class TestExtensions
 
 	private static IEnumerable<object> ToEnumerable(this object list)
 	{
-		Assert.IsInstanceOfType(list, typeof(IEnumerable),
-			$"{list} is not an IEnumerable");
+		Assert.IsInstanceOfType(list, typeof(IEnumerable), $"{list} is not an IEnumerable");
 
 		return (list as IEnumerable).Cast<object>();
 	}
 
 	private static bool IsEqualTo(this object? value, object? expected, string? message = null)
 	{
-		Assert.AreEqual(expected, value,
-			message ?? $"{value} is not {expected}");
+		Assert.AreEqual(expected, value, message ?? $"{value} is not {expected}");
 
 		return true;
 	}
