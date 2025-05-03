@@ -5,7 +5,7 @@ namespace UnitTests;
 public static class TestExtensions
 {
 	/// <summary>
-	/// checks if two objects are equal or have equal values in cases of enumerables
+	/// checks if two objects are equal or sequence equal in cases of enumerables
 	/// </summary>
 	/// <returns>throws exception if not, never returns false</returns>
 	public static bool Is(this object value, params object[]? expected)
@@ -105,6 +105,10 @@ public class TestExtensionTests
 		values.Is(1, 2, 3, 4);
 		values.Where(i => i % 2 == 0).Is(2, 4);
 	}
+
+	[TestMethod]
+	public void ValuesWithNull_Equal_Expected() =>
+		new int?[] { 1, 2, null, 4 }.Is(1, 2, null, 4);
 
 	[ExpectedException(typeof(AssertFailedException))]
 	[TestMethod]
