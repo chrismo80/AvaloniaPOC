@@ -4,7 +4,7 @@ namespace UnitTests;
 
 public class IsNotException(string message) : Exception(message);
 
-public static class TestExtensions
+public static class IsExtension
 {
 	/// <summary>
 	/// checks if two objects are equal or sequence equal in cases of enumerables
@@ -64,7 +64,7 @@ public static class TestExtensions
 }
 
 [TestClass]
-public class TestExtensionTests
+public class IsExtensionTests
 {
 	[TestMethod]
 	[DataRow(null, null)]
