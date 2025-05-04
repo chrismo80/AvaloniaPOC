@@ -12,18 +12,13 @@ public class IsNotException : Exception
 		: base(message)
 	{ }
 
-	private static string Format(object? value)
+	private static string Format(object? value) => value switch
 	{
-		var text = value switch
-		{
-			null => "NULL",
-			string => $"\"{value}\" ({value.GetType()})",
-			IEnumerable enumerable => $"[{string.Join(", ", enumerable.Cast<object>())}]",
-			_ => $"{value} ({value.GetType()})"
-		};
-
-		return text;
-	}
+		null => "NULL",
+		string => $"\"{value}\" ({value.GetType()})",
+		IEnumerable enumerable => $"[{string.Join(", ", enumerable.Cast<object>())}]",
+		_ => $"{value} ({value.GetType()})"
+	};
 }
 
 public static class IsExtension
