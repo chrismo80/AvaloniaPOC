@@ -41,7 +41,9 @@ public static class IsExtension
 		if (values is IEnumerable enumerable)
 			return enumerable.Cast<object>().ToArray();
 
-		throw new IsNotException(values, Enumerable.Empty<object>(), new InvalidCastException("is not an IEnumerable"));
+		var ex = new InvalidCastException($"{values} is not an IEnumerable");
+
+		throw new IsNotException(values, Enumerable.Empty<object>(), ex);
 	}
 
 	private static bool Are(this object[] values, object[] expected)
