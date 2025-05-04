@@ -2,7 +2,29 @@ using System.Collections;
 
 namespace UnitTests;
 
-public class IsNotException(string message) : Exception(message);
+public class IsNotException : Exception
+{
+	public IsNotException(object? value, object? expected, string? message = null)
+		: base($"{Format(value)} is not {Format(expected)}\n" + message)
+	{ }
+
+	public IsNotException(string message)
+		: base(message)
+	{ }
+
+	private static string Format(object? value)
+	{
+		var text = value switch
+		{
+			null => "NULL",
+			string => $"\"{value}\" ({value.GetType()})",
+			IEnumerable enumerable => $"[{string.Join(", ", enumerable.Cast<object>())}]",
+			_ => $"{value} ({value.GetType()})"
+		};
+
+		return text;
+	}
+}
 
 public static class IsExtension
 {
@@ -34,17 +56,13 @@ public static class IsExtension
 	/// checks each value of the lists on equality
 	/// (uses recursion for nested lists)
 	/// </summary>
-	private static bool Are(this object[] values, object[] expected) =>
-		values.SameSize(expected) && Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
+	private static bool Are(this object[] values, object[] expected)
+	{
+		if (values.Length == expected.Length)
+			return Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
 
-	private static bool SameSize(this object[] values, object[] expected) =>
-		values.Length.IsEqualTo(expected.Length, $"Count mismatch:\n\t{values.Format()}\n\t!=\n\t{expected.Format()}");
-
-	private static string Format(this IEnumerable<object> values) =>
-		$"[{string.Join(", ", values)}]";
-
-	private static string Format(this object? value) =>
-		value is null ? "NULL" : $"{value} ({value?.GetType()})";
+		throw new IsNotException(values, expected);
+	}
 
 	private static IEnumerable<object> ToEnumerable(this object list)
 	{
@@ -59,7 +77,7 @@ public static class IsExtension
 		if (EqualityComparer<T>.Default.Equals(expected, value))
 			return true;
 
-		throw new IsNotException(message ?? $"{value.Format()} is not {expected.Format()}");
+		throw new IsNotException(value, expected, message);
 	}
 }
 
@@ -87,7 +105,7 @@ public class IsExtensionTests
 	[DataRow(7, true)]
 	[DataRow(false, 7d)]
 	[DataRow(8d, 8f)]
-	[DataRow(9, "9")]
+	[DataRow(99, "99")]
 	[DataRow("ABC", false)]
 	[DataRow("ABC", null)]
 	[DataRow("ABC", "ABD")]
@@ -129,12 +147,12 @@ public class IsExtensionTests
 
 	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
-	public void IEnumerable_Not_Equal_Params_TooLong() =>
+	public void IEnumerable_Not_Equal_Params_TooShort() =>
 		new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4);
 
 	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
-	public void IEnumerable_Not_Equal_Params_TooShort() =>
+	public void IEnumerable_Not_Equal_Params_TooLong() =>
 		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
 
 	[TestMethod]
