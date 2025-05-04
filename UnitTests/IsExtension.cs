@@ -16,7 +16,7 @@ public class IsNotException : Exception
 	{
 		null => "<NULL>",
 		string => $"\"{value}\" ({value.GetType()})",
-		IEnumerable enumerable => $"[{string.Join(", ", enumerable.Cast<object>())}]",
+		IEnumerable enumerable => $"[ {string.Join(" | ", enumerable.Cast<object>())} ]",
 		_ => $"{value} ({value.GetType()})"
 	};
 }
@@ -31,24 +31,41 @@ public static class IsExtension
 		{
 			null => value.IsEqualTo(expected),
 			1 => value.IsEqualTo(expected[0]),
-			_ => value.ToEnumerable().ToArray().Are(expected)
+			_ => value.ConvertToArray().Are(expected)
 		};
 	}
 
-	private static object[] Unwrap(this object[] array) =>
-		array is [IEnumerable list and not string] ? list.ToEnumerable().ToArray() : array;
+	private static object[] Unwrap(this object[] array)
+	{
+		if (array is [IEnumerable list and not string])
+			return list.ConvertToArray();
 
-	private static IEnumerable<object> ToEnumerable(this object values) =>
-		values is IEnumerable enumerable ? enumerable.Cast<object>() :
-			throw new IsNotException(values, "an IEnumerable");
+		return array;
+	}
 
-	private static bool Are(this object[] values, object[] expected) =>
-		values.Length == expected.Length ? Enumerable.Range(0, values.Length).All(i => values[i].Is(expected[i])) :
-			throw new IsNotException(values, expected);
+	private static object[] ConvertToArray(this object values)
+	{
+		if (values is IEnumerable enumerable)
+			return enumerable.Cast<object>().ToArray();
 
-	private static bool IsEqualTo<T>(this T? value, T? expected) =>
-		EqualityComparer<T>.Default.Equals(expected, value) ? true :
-			throw new IsNotException(value, expected);
+		throw new IsNotException(values, "an IEnumerable");
+	}
+
+	private static bool Are(this object[] values, object[] expected)
+	{
+		if (values.Length == expected.Length)
+			return Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
+
+		throw new IsNotException(values, expected);
+	}
+
+	private static bool IsEqualTo<T>(this T? value, T? expected)
+	{
+		if (EqualityComparer<T>.Default.Equals(expected, value))
+			return true;
+
+		throw new IsNotException(value, expected);
+	}
 }
 
 [TestClass]
