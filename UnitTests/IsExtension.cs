@@ -38,20 +38,20 @@ public static class IsExtension
 	private static object[] Unwrap(this object[] array) =>
 		array is [IEnumerable list and not string] ? list.ToEnumerable().ToArray() : array;
 
-	private static bool Are(this object[] values, object[] expected)
-	{
-		if (values.Length == expected.Length)
-			return Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
-
-		throw new IsNotException(values, expected);
-	}
-
 	private static IEnumerable<object> ToEnumerable(this object values)
 	{
 		if (values is IEnumerable enumerable)
 			return enumerable.Cast<object>();
 
 		throw new IsNotException(values, "an IEnumerable");
+	}
+
+	private static bool Are(this object[] values, object[] expected)
+	{
+		if (values.Length == expected.Length)
+			return Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
+
+		throw new IsNotException(values, expected);
 	}
 
 	private static bool IsEqualTo<T>(this T? value, T? expected)
