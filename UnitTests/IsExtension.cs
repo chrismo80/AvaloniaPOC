@@ -2,21 +2,14 @@ using System.Collections;
 
 namespace UnitTests;
 
-public class IsNotException : Exception
+public class IsNotException(object? value, object? expected)
+	: Exception($"{Format(value)} is not {Format(expected)}")
 {
-	public IsNotException(object? value, object? expected)
-		: base($"{Format(value)} is not {Format(expected)}")
-	{ }
-
-	public IsNotException(object? value, string text)
-		: base($"{Format(value)} is not {text}")
-	{ }
-
 	private static string Format(object? value) => value switch
 	{
 		null => "<NULL>",
 		string => $"\"{value}\" ({value.GetType()})",
-		IEnumerable enumerable => $"[ {string.Join(" | ", enumerable.Cast<object>())} ]",
+		IEnumerable enumerable => $"[{string.Join("|", enumerable.Cast<object>())}]",
 		_ => $"{value} ({value.GetType()})"
 	};
 }
@@ -48,7 +41,7 @@ public static class IsExtension
 		if (values is IEnumerable enumerable)
 			return enumerable.Cast<object>().ToArray();
 
-		throw new IsNotException(values, "an IEnumerable");
+		throw new IsNotException(values, Enumerable.Empty<object>());
 	}
 
 	private static bool Are(this object[] values, object[] expected)
