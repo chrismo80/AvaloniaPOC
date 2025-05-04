@@ -4,8 +4,8 @@ namespace UnitTests;
 
 public class IsNotException : Exception
 {
-	public IsNotException(object? value, object? expected, string? message = null)
-		: base($"{Format(value)} is not {Format(expected)}\n" + message)
+	public IsNotException(object? value, object? expected)
+		: base($"{Format(value)} is not {Format(expected)}")
 	{ }
 
 	public IsNotException(string message)
@@ -72,12 +72,12 @@ public static class IsExtension
 		throw new IsNotException($"{list} is not an IEnumerable");
 	}
 
-	private static bool IsEqualTo<T>(this T? value, T? expected, string? message = null)
+	private static bool IsEqualTo<T>(this T? value, T? expected)
 	{
 		if (EqualityComparer<T>.Default.Equals(expected, value))
 			return true;
 
-		throw new IsNotException(value, expected, message);
+		throw new IsNotException(value, expected);
 	}
 }
 
