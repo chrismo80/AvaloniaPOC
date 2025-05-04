@@ -8,13 +8,13 @@ public class IsNotException : Exception
 		: base($"{Format(value)} is not {Format(expected)}")
 	{ }
 
-	public IsNotException(string message)
-		: base(message)
+	public IsNotException(object? value, string text)
+		: base($"{Format(value)} is not {text}")
 	{ }
 
 	private static string Format(object? value) => value switch
 	{
-		null => "NULL",
+		null => "<NULL>",
 		string => $"\"{value}\" ({value.GetType()})",
 		IEnumerable enumerable => $"[{string.Join(", ", enumerable.Cast<object>())}]",
 		_ => $"{value} ({value.GetType()})"
@@ -23,10 +23,6 @@ public class IsNotException : Exception
 
 public static class IsExtension
 {
-	/// <summary>
-	/// checks if two objects are equal or sequence equal in cases of enumerables
-	/// </summary>
-	/// <returns>throws exception if not, never returns false</returns>
 	public static bool Is(this object value, params object[]? expected)
 	{
 		expected = expected?.Unwrap();
@@ -39,18 +35,9 @@ public static class IsExtension
 		};
 	}
 
-	/// <summary>
-	/// unwraps inner array of first element (due to params usage)
-	/// use with caution for nested arrays, may lead to false positives
-	/// </summary>
-	/// <returns>the inner enumerable as array of the first element</returns>
 	private static object[] Unwrap(this object[] array) =>
 		array is [IEnumerable list and not string] ? list.ToEnumerable().ToArray() : array;
 
-	/// <summary>
-	/// checks each value of the lists on equality
-	/// (uses recursion for nested lists)
-	/// </summary>
 	private static bool Are(this object[] values, object[] expected)
 	{
 		if (values.Length == expected.Length)
@@ -59,12 +46,12 @@ public static class IsExtension
 		throw new IsNotException(values, expected);
 	}
 
-	private static IEnumerable<object> ToEnumerable(this object list)
+	private static IEnumerable<object> ToEnumerable(this object values)
 	{
-		if (list is IEnumerable enumerable)
+		if (values is IEnumerable enumerable)
 			return enumerable.Cast<object>();
 
-		throw new IsNotException($"{list} is not an IEnumerable");
+		throw new IsNotException(values, "an IEnumerable");
 	}
 
 	private static bool IsEqualTo<T>(this T? value, T? expected)
