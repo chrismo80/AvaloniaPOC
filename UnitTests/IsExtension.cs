@@ -24,19 +24,19 @@ public static class IsExtension
 		{
 			null => value.IsEqualTo(null),
 			1 => value.IsEqualTo(expected[0]),
-			_ => value.ConvertToArray().Are(expected)
+			_ => value.CastToArray().Are(expected)
 		};
 	}
 
 	private static object[] Unwrap(this object[] array)
 	{
 		if (array is [IEnumerable list and not string])
-			return list.ConvertToArray();
+			return list.CastToArray();
 
 		return array;
 	}
 
-	private static object[] ConvertToArray(this object values)
+	private static object[] CastToArray(this object values)
 	{
 		if (values is IEnumerable enumerable)
 			return enumerable.Cast<object>().ToArray();
