@@ -3,7 +3,7 @@ using System.Collections;
 namespace UnitTests;
 
 public class IsNotException(object? value, object? expected)
-	: SystemException($"{Format(value)} is not {Format(expected)}")
+	: Exception($"{Format(value)} is not {Format(expected)}")
 {
 	private static string Format(object? value) => value switch
 	{
@@ -16,56 +16,40 @@ public class IsNotException(object? value, object? expected)
 
 public static class IsExtension
 {
-	public static bool Is(this object value, params object[]? expected)
+	public static void Is(this object value, params object[]? expected)
 	{
 		expected = expected?.Unwrap();
 
-		return expected?.Length switch
+		switch (expected?.Length)
 		{
-			null => value.IsEqualTo(null),
-			1 => value.IsEqualTo(expected[0]),
-			_ => value.CastToArray().Are(expected)
-		};
+			case null: value.IsEqualTo(null); break;
+			case 1: value.IsEqualTo(expected[0]); break;
+			default: value.CastToArray().Are(expected); break;
+		}
 	}
 
-	public static bool Is<T>(this object value)
-	{
-		if (value is T)
-			return true;
+	public static T Is<T>(this object value) =>
+		value is T cast ? cast : throw new IsNotException(value, typeof(T));
 
-		throw new IsNotException(value, typeof(T));
+	private static object[] Unwrap(this object[] array) =>
+		array is [IEnumerable list and not string] ? list.CastToArray() : array;
+
+	private static object[] CastToArray(this object values) =>
+		values.Is<IEnumerable>().Cast<object>().ToArray();
+
+	private static void Are(this object[] values, object[] expected)
+	{
+		if (values.Length != expected.Length)
+			throw new IsNotException(values, expected);
+
+		foreach (var i in Enumerable.Range(0, expected.Length))
+			values[i].Is(expected[i]);
 	}
 
-	private static object[] Unwrap(this object[] array)
+	private static void IsEqualTo<T>(this T? value, T? expected)
 	{
-		if (array is [IEnumerable list and not string])
-			return list.CastToArray();
-
-		return array;
-	}
-
-	private static object[] CastToArray(this object values)
-	{
-		if (values.Is<IEnumerable>() && values is IEnumerable enumerable)
-			return enumerable.Cast<object>().ToArray();
-
-		throw new IsNotException(values, Enumerable.Empty<object>());
-	}
-
-	private static bool Are(this object[] values, object[] expected)
-	{
-		if (values.Length == expected.Length)
-			return Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]));
-
-		throw new IsNotException(values, expected);
-	}
-
-	private static bool IsEqualTo<T>(this T? value, T? expected)
-	{
-		if (EqualityComparer<T>.Default.Equals(expected, value))
-			return true;
-
-		throw new IsNotException(value, expected);
+		if (!EqualityComparer<T>.Default.Equals(expected, value))
+			throw new IsNotException(value, expected);
 	}
 }
 
