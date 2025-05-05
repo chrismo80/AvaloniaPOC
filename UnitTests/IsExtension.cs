@@ -2,8 +2,8 @@ using System.Collections;
 
 namespace UnitTests;
 
-public class IsNotException(object? value, object? expected, Exception? innerException = null)
-	: SystemException($"{Format(value)} is not {Format(expected)}", innerException)
+public class IsNotException(object? value, object? expected)
+	: SystemException($"{Format(value)} is not {Format(expected)}")
 {
 	private static string Format(object? value) => value switch
 	{
@@ -46,12 +46,10 @@ public static class IsExtension
 
 	private static object[] CastToArray(this object values)
 	{
-		if (values is IEnumerable enumerable)
+		if (values.Is<IEnumerable>() && values is IEnumerable enumerable)
 			return enumerable.Cast<object>().ToArray();
 
-		var ex = new InvalidCastException($"{values} is not an IEnumerable");
-
-		throw new IsNotException(values, Enumerable.Empty<object>(), ex);
+		throw new IsNotException(values, Enumerable.Empty<object>());
 	}
 
 	private static bool Are(this object[] values, object[] expected)
