@@ -22,7 +22,7 @@ public static class IsExtension
 
 		return expected?.Length switch
 		{
-			null => value.IsEqualTo(expected),
+			null => value.IsEqualTo(null),
 			1 => value.IsEqualTo(expected[0]),
 			_ => value.ConvertToArray().Are(expected)
 		};
