@@ -1,4 +1,8 @@
 using System.Collections;
+using CompanyName.Core;
+using CompanyName.Core.Auth;
+using CompanyName.Core.Devices;
+using CompanyName.Core.Messages;
 
 namespace UnitTests;
 
@@ -26,6 +30,14 @@ public static class IsExtension
 			1 => value.IsEqualTo(expected[0]),
 			_ => value.CastToArray().Are(expected)
 		};
+	}
+
+	public static bool Is<T>(this object value)
+	{
+		if (value is T)
+			return true;
+
+		throw new IsNotException(value, typeof(T));
 	}
 
 	private static object[] Unwrap(this object[] array)
@@ -149,4 +161,13 @@ public class IsExtensionTests
 	[TestMethod]
 	public void Value_NotEquals_List() =>
 		5.Is(new List<int> { 1, 2 });
+
+	[TestMethod]
+	public void Value_Is_Type() =>
+		new MessageManager().Is<BaseService>();
+
+	[ExpectedException(typeof(IsNotException))]
+	[TestMethod]
+	public void Value_IsNot_Type() =>
+		new AuthManager().Is<BaseDevice>();
 }
