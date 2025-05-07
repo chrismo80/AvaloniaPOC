@@ -3,15 +3,17 @@ using System.Collections;
 namespace UnitTests;
 
 public class IsNotException(object? value, object? expected)
-	: Exception($"{Format(value)} is not {Format(expected)}")
+	: Exception($"{Format(value)}{TypeOf(value)} is not {Format(expected)}{TypeOf(expected)}")
 {
 	private static string Format(object? value) => value switch
 	{
 		null => "<NULL>",
-		string => $"\"{value}\" ({value.GetType()})",
-		IEnumerable enumerable => $"[{string.Join("|", enumerable.Cast<object>())}] ({value.GetType()})",
-		_ => $"{value} ({value.GetType()})"
+		string => $"\"{value}\"",
+		IEnumerable enumerable => $"[{string.Join("|", enumerable.Cast<object>())}]",
+		_ => $"{value}"
 	};
+
+	private static string TypeOf(object? value) => value is null or Type ? "" : $" ({value.GetType()})";
 }
 
 public static class IsExtension
