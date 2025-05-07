@@ -2,10 +2,13 @@ using System.Collections;
 
 namespace UnitTests;
 
-public class IsNotException(object? value, object? expected)
-	: Exception($"{Format(value)}{TypeOf(value)} is not {Format(expected)}{TypeOf(expected)}")
+public class IsNotException(object? actual, object? expected)
+	: Exception($"{Format(actual)} is not {Format(expected)}")
 {
-	private static string Format(object? value) => value switch
+	private static string Format(object? value) =>
+		$"{ValueOf(value)}{TypeOf(value)}";
+
+	private static string ValueOf(object? value) => value switch
 	{
 		null => "<NULL>",
 		string => $"\"{value}\"",
@@ -13,25 +16,26 @@ public class IsNotException(object? value, object? expected)
 		_ => $"{value}"
 	};
 
-	private static string TypeOf(object? value) => value is null or Type ? "" : $" ({value.GetType()})";
+	private static string TypeOf(object? value) =>
+		value is null or Type ? "" : $" ({value.GetType()})";
 }
 
 public static class IsExtension
 {
-	public static void Is(this object value, params object[]? expected)
+	public static void Is(this object actual, params object[]? expected)
 	{
 		expected = expected?.Unwrap();
 
 		switch (expected?.Length)
 		{
-			case null: value.IsEqualTo(null); break;
-			case 1: value.IsEqualTo(expected[0]); break;
-			default: value.CastToArray().Are(expected); break;
+			case null: actual.IsEqualTo(null); break;
+			case 1: actual.IsEqualTo(expected[0]); break;
+			default: actual.CastToArray().Are(expected); break;
 		}
 	}
 
-	public static T Is<T>(this object value) =>
-		value is T cast ? cast : throw new IsNotException(value, typeof(T));
+	public static T Is<T>(this object actual) =>
+		actual is T cast ? cast : throw new IsNotException(actual, typeof(T));
 
 	private static object[] Unwrap(this object[] array) =>
 		array is [IEnumerable list and not string] ? list.CastToArray() : array;
@@ -48,10 +52,10 @@ public static class IsExtension
 			values[i].Is(expected[i]);
 	}
 
-	private static void IsEqualTo<T>(this T? value, T? expected)
+	private static void IsEqualTo<T>(this T? actual, T? expected)
 	{
-		if (!EqualityComparer<T>.Default.Equals(expected, value))
-			throw new IsNotException(value, expected);
+		if (!EqualityComparer<T>.Default.Equals(actual, expected))
+			throw new IsNotException(actual, expected);
 	}
 }
 
@@ -66,8 +70,8 @@ public class IsExtensionTests
 	[DataRow(2.2, 2.2)]
 	[DataRow(3f, 3f)]
 	[DataRow("4", "4")]
-	public void Value_Equals_Expected(object value, object expected) =>
-		value.Is(expected);
+	public void Actual_Equals_Expected(object actual, object expected) =>
+		actual.Is(expected);
 
 	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
@@ -83,10 +87,10 @@ public class IsExtensionTests
 	[DataRow("ABC", false)]
 	[DataRow("ABC", null)]
 	[DataRow("ABC", "ABD")]
-	public void Value_Not_Equals_Expected(object value, object expected)
+	public void Actual_Not_Equals_Expected(object actual, object expected)
 	{
-		value.Is(expected);
-		expected.Is(value);
+		actual.Is(expected);
+		expected.Is(actual);
 	}
 
 	[TestMethod]
