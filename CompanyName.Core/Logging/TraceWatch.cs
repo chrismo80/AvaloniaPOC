@@ -15,7 +15,7 @@ public class TraceWatch : Stopwatch, IDisposable
 
 		Message = message ?? $"-------------- Method '{method}'";
 
-		//_caller.Trace($"{Message} started");
+		_caller.Trace($"{Message} started");
 
 		Start();
 	}
