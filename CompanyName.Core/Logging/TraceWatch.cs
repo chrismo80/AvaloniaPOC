@@ -5,7 +5,7 @@ namespace CompanyName.Core.Logging;
 
 public class TraceWatch : Stopwatch, IDisposable
 {
-	readonly object? _caller;
+	private readonly object? _caller;
 
 	public string Message { get; set; }
 
@@ -26,14 +26,14 @@ public class TraceWatch : Stopwatch, IDisposable
 
 		//Export(Message, $"{Elapsed.TotalSeconds:F3}");
 
-		_caller!.Trace($"{Message} end (Duration={Elapsed.TotalSeconds:F3}s)");
+		_caller?.Trace($"{Message} end (Duration={Elapsed.TotalSeconds:F3}s)");
 	}
 
 	private void Export(string fileName, string data)
 	{
 		var file = Path.Combine("Durations", _caller.ToString(), fileName.ToValidFileName() + ".txt");
 
-		Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+		Directory.CreateDirectory(Path.GetDirectoryName(file));
 		File.AppendAllText(file, data + Environment.NewLine);
 	}
 }
