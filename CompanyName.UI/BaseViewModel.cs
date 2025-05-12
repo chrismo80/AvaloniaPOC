@@ -36,8 +36,6 @@ public abstract class BaseViewModel : ObservableObject
         }
     }
 
-    protected void Guard(bool condition, string message) => this.IsTrue(condition, message);
-
     private MethodInfo FindMethod(string name) => GetType()
         .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
         .Where(m => m.GetParameters().Length == 0 || m.GetParameters().All(p => p.HasDefaultValue))
