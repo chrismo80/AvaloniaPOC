@@ -75,5 +75,9 @@ public abstract class BaseDevice : INotifyPropertyChanged, IDevice
         Guard(DateTime.Now.Microsecond <= 300, "Init failed");
     }
 
-    protected void Guard(bool condition, string message) => this.IsTrue(condition, message);
+    protected void Guard(bool condition, string message)
+    {
+        if (!condition)
+            throw new Exception(message);
+    }
 }
