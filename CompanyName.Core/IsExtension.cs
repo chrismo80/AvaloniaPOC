@@ -30,7 +30,7 @@ public static class IsExtension
 		{
 			case null: actual.IsEqualTo(null); break;
 			case 1: actual.IsEqualTo(expected[0]); break;
-			default: actual.CastToArray().Are(expected); break;
+			default: actual.ToArray().Are(expected); break;
 		}
 	}
 
@@ -38,10 +38,10 @@ public static class IsExtension
 		actual is T cast ? cast : throw new IsNotException(actual, typeof(T));
 
 	private static object[] Unwrap(this object[] array) =>
-		array is [IEnumerable list and not string] ? list.CastToArray() : array;
+		array.Length == 1 && array[0] is IEnumerable first && !(first is string) ? first.ToArray() : array;
 
-	private static object[] CastToArray(this object values) =>
-		values.Is<IEnumerable>().Cast<object>().ToArray();
+	private static object[] ToArray(this object value) =>
+		Enumerable.ToArray(value.Is<IEnumerable>().Cast<object>());
 
 	private static void Are(this object[] values, object[] expected)
 	{
