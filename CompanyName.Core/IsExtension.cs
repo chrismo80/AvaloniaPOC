@@ -38,7 +38,7 @@ public static class IsExtension
         actual is T cast ? cast : throw new IsNotException(actual, typeof(T));
 
     private static object[] Unwrap(this object[] array) =>
-        array.Length == 1 && array[0] is IEnumerable first && !(first is string) ? first.ToArray() : array;
+        array is [IEnumerable first and not string] ? first.ToArray() : array;
 
     private static object[] ToArray(this object value) =>
         Enumerable.ToArray(value.Is<IEnumerable>().Cast<object>());
