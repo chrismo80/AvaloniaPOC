@@ -8,9 +8,9 @@ public static class IsExtension
 		actual is T cast ? cast : throw new IsNotException(actual, typeof(T));
 
 	public static void Is(this object actual, params object[]? expected) =>
-		actual.CompareTo(expected?.Unwrap());
+		actual.VerifyEqualityTo(expected?.Unwrap());
 
-	private static void CompareTo(this object actual, object[]? expected)
+	private static void VerifyEqualityTo(this object actual, object[]? expected)
 	{
 		switch (expected?.Length)
 		{
