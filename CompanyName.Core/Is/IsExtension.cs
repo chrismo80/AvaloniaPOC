@@ -31,7 +31,7 @@ public static class IsExtension
 		if (values.Length != expected.Length)
 			throw new IsNotException(values, expected);
 
-		foreach (var i in 0.ToExcluding(expected.Length))
+		foreach (var i in expected.Length.For())
 			values[i].Is(expected[i]);
 	}
 
