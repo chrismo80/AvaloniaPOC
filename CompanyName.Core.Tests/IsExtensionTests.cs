@@ -1,6 +1,6 @@
 using CompanyName.Core.Is;
 
-namespace UnitTests;
+namespace CompanyName.Core.Tests;
 
 [TestClass]
 public class IsExtensionTests

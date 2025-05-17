@@ -1,6 +1,6 @@
 using CompanyName.Core;
 
-namespace UnitTests;
+namespace CompanyName.Core.Tests;
 
 public abstract class ServiceTests<T> where T : BaseService
 {
@@ -21,10 +21,8 @@ public abstract class ServiceTests<T> where T : BaseService
 	}
 
 	protected virtual void Pre()
-	{
-	}
+	{ }
 
 	protected virtual void Post()
-	{
-	}
+	{ }
 }

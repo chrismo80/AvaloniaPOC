@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompanyName.UI", "CompanyNa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectExampleHMI", "ProjectExampleHMI\ProjectExampleHMI.csproj", "{57215D70-634A-4CF3-98DA-961FEFB93F5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{05D3D414-7182-49CA-BABE-10DE1B6BF1CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompanyName.Core.Tests", "CompanyName.Core.Tests\CompanyName.Core.Tests.csproj", "{05D3D414-7182-49CA-BABE-10DE1B6BF1CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
