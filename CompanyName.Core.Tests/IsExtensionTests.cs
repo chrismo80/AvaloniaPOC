@@ -13,8 +13,20 @@ public class IsExtensionTests
 	[DataRow(2.2, 2.2)]
 	[DataRow(3f, 3f)]
 	[DataRow("4", "4")]
-	public void Actual_Equals_Expected(object actual, object expected) =>
+	public void Is_Actual_Equals_Expected(object actual, object expected) =>
 		actual.Is(expected);
+
+	[ExpectedException(typeof(IsException))]
+	[TestMethod]
+	[DataRow(null, null)]
+	[DataRow(false, false)]
+	[DataRow(true, true)]
+	[DataRow(1, 1)]
+	[DataRow(2.2, 2.2)]
+	[DataRow(3f, 3f)]
+	[DataRow("4", "4")]
+	public void IsNot_Actual_Equals_Expected(object actual, object expected) =>
+		actual.IsNot(expected);
 
 	[ExpectedException(typeof(IsNotException))]
 	[TestMethod]
