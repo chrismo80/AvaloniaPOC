@@ -43,14 +43,15 @@ public static class IsExtension
         {
             (float a, float e) => a.IsInTolerance(e, 1e-6f),
             (double a, double e) => a.IsInTolerance(e, 1e-6),
-            _ => false
+            _ => false,
         };
 
     private static bool IsInTolerance<T>(this T actual, T expected, T tolerance) where T : IFloatingPoint<T> =>
-        T.Abs(actual - expected) <= tolerance * T.Max(T.One, T.Abs(expected));
+        T.Abs(actual - expected) <= tolerance * T.Max(T.One, T.Abs(expected)) ? true
+        : throw new Exception(actual.Actually("is not close to", expected));
 
-    private static string Actually(this object? actual, string actually, object? expected) =>
-        actual.Format() + " actually " + actually + " " + expected.Format();
+    private static string Actually(this object? actual, string equality, object? expected) =>
+        actual.Format() + " actually " + equality + " " + expected.Format();
 
     private static string Format(this object? value) =>
         value.FormatValue() + value.FormatType();
