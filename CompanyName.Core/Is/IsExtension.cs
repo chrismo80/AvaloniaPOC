@@ -6,10 +6,13 @@ using System.Collections;
 public static class IsExtension
 {
 	public static T Is<T>(this object actual) =>
-		actual is T cast ? cast : throw new Exception(actual.Actually("is not", typeof(T)));
+		actual is T cast ? cast : throw new Exception(actual.Actually("is no", typeof(T)));
+
+	public static bool IsExactly(this object actual, object expected) =>
+		actual.IsEqualTo(expected);
 
 	public static bool Is(this object actual, params object[]? expected) =>
-		actual.ShouldBe(expected?.Unwrap()) ? true : throw new Exception(actual.Actually("is not", expected));
+		actual.ShouldBe(expected?.Unwrap());
 
 	private static bool ShouldBe(this object actual, object[]? expected) =>
 		expected?.Length switch
@@ -26,7 +29,8 @@ public static class IsExtension
 		Enumerable.ToArray(value.Is<IEnumerable>().Cast<object>());
 
 	private static bool Are(this object[] values, object[] expected) =>
-		values.Length == expected.Length && expected.Length.For().All(i => values[i].Is(expected[i]));
+		values.Length == expected.Length ? expected.Length.For().All(i => values[i].Is(expected[i]))
+			: throw new Exception(values.Actually("are not", expected));
 
 	private static bool IsEqualTo<T>(this T? actual, T? expected) =>
 		EqualityComparer<T>.Default.Equals(actual, expected) || actual.IsCloseTo(expected) ? true
