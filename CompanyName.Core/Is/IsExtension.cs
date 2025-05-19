@@ -9,13 +9,7 @@ public static class IsExtension
         actual is T cast ? cast : throw new Exception(actual.Actually("is not", typeof(T)));
 
     public static bool Is(this object actual, params object[]? expected) =>
-        AreEqual(actual, expected) ? true : throw new Exception(actual.Actually("is not", expected));
-
-    public static bool IsNot(this object actual, params object[]? expected) =>
-        !AreEqual(actual, expected) ? true : throw new Exception(actual.Actually("is", expected));
-
-    private static bool AreEqual(object actual, params object[]? expected) =>
-        actual.ShouldBe(expected?.Unwrap());
+        actual.ShouldBe(expected?.Unwrap()) ? true : throw new Exception(actual.Actually("is not", expected));
 
     private static bool ShouldBe(this object actual, object[]? expected) =>
         expected?.Length switch
@@ -32,7 +26,7 @@ public static class IsExtension
         Enumerable.ToArray(value.Is<IEnumerable>().Cast<object>());
 
     private static bool Are(this object[] values, object[] expected) =>
-        values.Length == expected.Length && expected.Length.For().All(i => AreEqual(values[i], expected[i]));
+        values.Length == expected.Length && expected.Length.For().All(i => values[i].Is(expected[i]));
 
     private static bool IsEqualTo<T>(this T? actual, T? expected) =>
         EqualityComparer<T>.Default.Equals(actual, expected) || actual.IsCloseTo(expected) ? true

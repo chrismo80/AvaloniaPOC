@@ -17,17 +17,6 @@ public class IsExtensionTests
         actual.Is(expected);
 
     [TestMethod]
-    [DataRow(null, null)]
-    [DataRow(false, false)]
-    [DataRow(true, true)]
-    [DataRow(1, 1)]
-    [DataRow(2.2, 2.2)]
-    [DataRow(3f, 3f)]
-    [DataRow("4", "4")]
-    public void IsNot_Actual_Equals_Expected(object actual, object expected) =>
-        Assert.ThrowsException<Exception>(() => actual.IsNot(expected));
-
-    [TestMethod]
     [DataRow(null, true)]
     [DataRow(null, false)]
     [DataRow(true, false)]
