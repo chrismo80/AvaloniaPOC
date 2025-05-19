@@ -91,6 +91,15 @@ public class IsExtensionTests
     public void Value_IsNot_Type() =>
         Assert.ThrowsException<Exception>(() => new List<int>().Is<IReadOnlyList<double>>());
 
+    [TestMethod]
+    [DataRow(1.000001, 1.0)]
+    [DataRow(2.999999f, 3f)]
+    [DataRow(1000000.1, 1000000.0)]
+    [DataRow(1_000_000.0, 1_000_001.0)]
+    [DataRow(783.0123, 783.0124)]
+    public void IsCloseTo_Actual_Expected(object actual, object expected) =>
+        actual.Is(expected);
+
     private static void VerifyEquality(IEnumerable<int> values)
     {
         values.Is(new int[] { 1, 2, 3, 4 });
