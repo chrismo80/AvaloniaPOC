@@ -59,9 +59,12 @@ public static class IsExtension
 		{
 			null => "<NULL>",
 			string => $"\"{value}\"",
-			IEnumerable list => $"[{string.Join("|", list.ToArray().Select(x => x.FormatValue()))}]",
+			IEnumerable list => $"[{list.FormatArray()}]",
 			_ => $"{value}"
 		};
+
+	private static string FormatArray(this IEnumerable list) =>
+		string.Join("|", list.Cast<object>().Select(x => x.FormatValue()));
 
 	private static string FormatType(this object? value) =>
 		value is null or Type ? "" : $" ({value.GetType()})";
