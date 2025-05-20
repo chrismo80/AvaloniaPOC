@@ -59,7 +59,7 @@ public static class IsExtension
 		{
 			null => "<NULL>",
 			string => $"\"{value}\"",
-			IEnumerable enumerable => $"[{string.Join("|", enumerable.Cast<object>())}]",
+			IEnumerable list => $"[{string.Join("|", list.ToArray().Select(x => x.FormatValue()))}]",
 			_ => $"{value}"
 		};
 

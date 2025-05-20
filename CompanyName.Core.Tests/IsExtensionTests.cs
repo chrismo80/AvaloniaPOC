@@ -46,7 +46,7 @@ public class IsExtensionTests
 
 	[TestMethod]
 	public void List_Not_Equal_List() =>
-		Assert.ThrowsException<Exception>(() => new List<int> { 1, 2, 3, 5 }.Is(new List<int> { 1, 2, 3, 4 }));
+		Assert.ThrowsException<Exception>(() => new List<int?> { 1, 2, null, 4 }.Is(new List<int?> { 1, 2, 3, 4 }));
 
 	[TestMethod]
 	public void Array_Not_Equal_Params() =>
