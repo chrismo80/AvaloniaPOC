@@ -3,16 +3,51 @@ namespace CompanyName.Core.Is;
 using System.Numerics;
 using System.Collections;
 
-public static class IsExtension
+public static class IsExtensions
 {
+	public static T IsThrowing<T>(this Action action) where T : Exception
+	{
+		try
+		{
+			action();
+		}
+		catch (Exception ex)
+		{
+			return ex.Is<T>();
+		}
+
+		throw new IsNotException($"No exception was thrown. Expected: {typeof(T)}");
+	}
+
 	public static T Is<T>(this object actual) =>
-		actual is T cast ? cast : throw new Exception(actual.Actually("is no", typeof(T)));
+		actual is T cast ? cast : throw new IsNotException(actual.Actually("is no", typeof(T)));
+
+	public static bool Is(this object actual, params object[]? expected) =>
+		actual.ShouldBe(expected?.Unwrap());
 
 	public static bool IsExactly(this object actual, object expected) =>
 		actual.IsEqualTo(expected);
 
-	public static bool Is(this object actual, params object[]? expected) =>
-		actual.ShouldBe(expected?.Unwrap());
+	public static bool IsNull(this object actual) =>
+		actual.IsEqualTo(null);
+
+	public static bool IsTrue(this bool actual) =>
+		actual.IsEqualTo(true);
+
+	public static bool IsFalse(this bool actual) =>
+		actual.IsEqualTo(false);
+
+	public static bool IsEmpty(this IEnumerable actual) =>
+		!actual.Cast<object>().Any() ? true
+			: throw new IsNotException($"{actual.Format()} actually is not empty");
+
+	public static bool IsGreaterThan<T>(this T actual, T other) where T : IComparable<T> =>
+		actual.CompareTo(other) > 0 ? true
+			: throw new IsNotException(actual.Actually("is not greater than", other));
+
+	public static bool IsSmallerThan<T>(this T actual, T other) where T : IComparable<T> =>
+		actual.CompareTo(other) < 0 ? true
+			: throw new IsNotException(actual.Actually("is not smaller than", other));
 
 	private static bool ShouldBe(this object actual, object[]? expected) =>
 		expected?.Length switch
@@ -30,11 +65,11 @@ public static class IsExtension
 
 	private static bool Are(this object[] values, object[] expected) =>
 		values.Length == expected.Length ? expected.Length.For().All(i => values[i].Is(expected[i]))
-			: throw new Exception(values.Actually("are not", expected));
+			: throw new IsNotException(values.Actually("are not", expected));
 
 	private static bool IsEqualTo<T>(this T? actual, T? expected) =>
 		EqualityComparer<T>.Default.Equals(actual, expected) || actual.IsCloseTo(expected) ? true
-			: throw new Exception(actual.Actually("is not", expected));
+			: throw new IsNotException(actual.Actually("is not", expected));
 
 	private static bool IsCloseTo<T>(this T? actual, T? expected) =>
 		(actual, expected) switch
@@ -46,12 +81,15 @@ public static class IsExtension
 
 	private static bool IsInTolerance<T>(this T actual, T expected, T tolerance) where T : IFloatingPoint<T> =>
 		T.Abs(actual - expected) <= tolerance * T.Max(T.One, T.Abs(expected)) ? true
-			: throw new Exception(actual.Actually("is not close to", expected));
+			: throw new IsNotException(actual.Actually("is not close to", expected));
+}
 
-	private static string Actually(this object? actual, string equality, object? expected) =>
+public static class MessageExtensions
+{
+	internal static string Actually(this object? actual, string equality, object? expected) =>
 		actual.Format() + " actually " + equality + " " + expected.Format();
 
-	private static string Format(this object? value) =>
+	internal static string Format(this object? value) =>
 		value.FormatValue() + value.FormatType();
 
 	private static string FormatValue(this object? value) =>
@@ -69,3 +107,6 @@ public static class IsExtension
 	private static string FormatType(this object? value) =>
 		value is null or Type ? "" : $" ({value.GetType()})";
 }
+
+public class IsNotException(string message) : Exception(message)
+{ }

@@ -29,8 +29,11 @@ public class IsExtensionTests
 	[DataRow("ABC", false)]
 	[DataRow("ABC", null)]
 	[DataRow("ABC", "ABD")]
-	public void Actual_Not_Equals_Expected(object actual, object expected) =>
-		Assert.ThrowsException<Exception>(() => actual.Is(expected));
+	public void Actual_Not_Equals_Expected(object actual, object expected)
+	{
+		Action act = () => actual.Is(expected);
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
 	public void ListValues_Equal_Expected() =>
@@ -46,19 +49,29 @@ public class IsExtensionTests
 
 	[TestMethod]
 	public void List_Not_Equal_List() =>
-		Assert.ThrowsException<Exception>(() => new List<int?> { 1, 2, null, 4 }.Is(new List<int?> { 1, 2, 3, 4 }));
+		Assert.ThrowsException<IsNotException>(() =>
+			new List<int?> { 1, 2, null, 4 }.Is(new List<int?> { 1, 2, 3, 4 }));
 
 	[TestMethod]
-	public void Array_Not_Equal_Params() =>
-		Assert.ThrowsException<Exception>(() => new List<int> { 1, 2, 3, 5 }.Is(new List<int> { 1, 2, 3, 4 }));
+	public void Array_Not_Equal_Params()
+	{
+		Action act = () => new List<int> { 1, 2, 3, 5 }.Is(new List<int> { 1, 2, 3, 4 });
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
-	public void IEnumerable_Not_Equal_Params_TooShort() =>
-		Assert.ThrowsException<Exception>(() => new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4));
+	public void IEnumerable_Not_Equal_Params_TooShort()
+	{
+		Action act = () => new List<int> { 1, 2, 3, 5 }.Where(i => i % 2 == 0).Is(2, 4);
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
-	public void IEnumerable_Not_Equal_Params_TooLong() =>
-		Assert.ThrowsException<Exception>(() => new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4));
+	public void IEnumerable_Not_Equal_Params_TooLong()
+	{
+		Action act = () => new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
 	public void JaggedArrays_Equals_Expected() =>
@@ -69,21 +82,44 @@ public class IsExtensionTests
 		new List<object> { 1, 2 }.Is(new List<object> { 1, new List<object> { 2 } });
 
 	[TestMethod]
-	public void DifferentDepth_EqualsExactly_Fails() =>
-		Assert.ThrowsException<Exception>(() =>
-			new List<object> { 1, 2 }.IsExactly(new List<object> { 1, new List<object> { 2 } }));
+	public void DifferentDepth_EqualsExactly_Fails()
+	{
+		Action act = () => new List<object> { 1, 2 }.IsExactly(new List<object> { 1, new List<object> { 2 } });
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
-	public void Value_NotEquals_List() =>
-		Assert.ThrowsException<Exception>(() => 5.Is(new List<int> { 1, 2 }));
+	public void Value_NotEquals_List()
+	{
+		Action act = () => 5.Is(new List<int> { 1, 2 });
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
 	public void Value_Is_Type() =>
 		new List<int>().Is<IReadOnlyList<int>>();
 
 	[TestMethod]
-	public void Value_IsNot_Type() =>
-		Assert.ThrowsException<Exception>(() => new List<int>().Is<IReadOnlyList<double>>());
+	public void Value_IsNot_Type()
+	{
+		Action act = () => new List<int>().Is<IReadOnlyList<double>>();
+		act.IsThrowing<IsNotException>();
+	}
+
+	[TestMethod]
+	public void AdditionalExtensions()
+	{
+		true.IsTrue();
+		false.IsFalse();
+
+		5.IsGreaterThan(4);
+		5.0.IsSmallerThan(6);
+
+		Array.Empty<int>().IsEmpty();
+
+		int? value = null;
+		value.IsNull();
+	}
 
 	[TestMethod]
 	[DataRow(1.000001, 1.0)]
