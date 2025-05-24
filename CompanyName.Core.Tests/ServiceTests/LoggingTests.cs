@@ -1,5 +1,5 @@
 using CompanyName.Core.Logging;
-using CompanyName.Core.Is;
+using Is;
 
 namespace CompanyName.Core.Tests.ServiceTests;
 

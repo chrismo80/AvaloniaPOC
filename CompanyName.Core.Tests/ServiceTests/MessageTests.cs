@@ -1,5 +1,5 @@
 using CompanyName.Core.Messages;
-using CompanyName.Core.Is;
+using Is;
 
 namespace CompanyName.Core.Tests.ServiceTests;
 
