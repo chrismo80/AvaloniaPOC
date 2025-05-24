@@ -27,12 +27,12 @@ public static class IsExtensions
 	}
 
 	/// <summary>
-	/// Asserts that the actual object is of type <typeparamref name="T" /> and returns it as that type.
+	/// Asserts that the actual object is of type <typeparamref name="T" /> and returns its cast.
 	/// </summary>
 	/// <typeparam name="T">The expected type.</typeparam>
 	/// <param name="actual">The actual object to check.</param>
 	/// <returns>The object cast to type <typeparamref name="T" />.</returns>
-	/// <exception cref="IsNotException">Thrown if the type does not match.</exception>
+	/// <exception cref="IsNotException">Thrown if the actual object is not of that type.</exception>
 	public static T Is<T>(this object actual) =>
 		actual is T cast ? cast : throw new IsNotException(actual.Actually("is no", typeof(T)));
 
@@ -41,8 +41,8 @@ public static class IsExtensions
 	/// </summary>
 	/// <param name="actual">The actual value.</param>
 	/// <param name="expected">The expected value(s) to match against.</param>
-	/// <returns>True if a match is found.</returns>
-	/// <exception cref="IsNotException">Thrown if no match is found.</exception>
+	/// <returns>True if matching.</returns>
+	/// <exception cref="IsNotException">Thrown if not matching.</exception>
 	public static bool Is(this object actual, params object[]? expected) =>
 		actual.ShouldBe(expected?.Unwrap());
 
@@ -66,18 +66,18 @@ public static class IsExtensions
 		actual.IsEqualTo(null);
 
 	/// <summary>
-	/// Asserts that the boolean value is <c>true</c>.
+	/// Asserts that a boolean value is <c>true</c>.
 	/// </summary>
-	/// <param name="actual">The actual boolean value.</param>
+	/// <param name="actual">The actual boolean to check.</param>
 	/// <returns>True if the value is true.</returns>
 	/// <exception cref="IsNotException">Thrown if the value is false.</exception>
 	public static bool IsTrue(this bool actual) =>
 		actual.IsEqualTo(true);
 
 	/// <summary>
-	/// Asserts that the boolean value is <c>false</c>.
+	/// Asserts that a boolean value is <c>false</c>.
 	/// </summary>
-	/// <param name="actual">The actual boolean value.</param>
+	/// <param name="actual">The actual boolean to check.</param>
 	/// <returns>True if the value is false.</returns>
 	/// <exception cref="IsNotException">Thrown if the value is true.</exception>
 	public static bool IsFalse(this bool actual) =>
@@ -94,7 +94,7 @@ public static class IsExtensions
 			: throw new IsNotException($"{actual.Format()} is not empty");
 
 	/// <summary>
-	/// Asserts that the actual value is greater than the given <paramref name="other" />.
+	/// Asserts that the actual value is greater than the given <paramref name="other" /> value.
 	/// </summary>
 	/// <typeparam name="T">A comparable type.</typeparam>
 	/// <param name="actual">The actual value.</param>
@@ -106,7 +106,7 @@ public static class IsExtensions
 			: throw new IsNotException(actual.Actually("is not greater than", other));
 
 	/// <summary>
-	/// Asserts that the actual value is smaller than the given <paramref name="other" />.
+	/// Asserts that the actual value is smaller than the given <paramref name="other" /> value.
 	/// </summary>
 	/// <typeparam name="T">A comparable type.</typeparam>
 	/// <param name="actual">The actual value.</param>
@@ -150,8 +150,8 @@ public static class IsExtensions
 			_ => false
 		};
 
-	private static bool IsInTolerance<T>(this T actual, T expected, T tolerance) where T : IFloatingPoint<T> =>
-		T.Abs(actual - expected) <= tolerance * T.Max(T.One, T.Abs(expected)) ? true
+	private static bool IsInTolerance<T>(this T actual, T expected, T epsilon) where T : IFloatingPoint<T> =>
+		T.Abs(actual - expected) <= epsilon * T.Max(T.One, T.Abs(expected)) ? true
 			: throw new IsNotException(actual.Actually("is not close enough to", expected));
 }
 
