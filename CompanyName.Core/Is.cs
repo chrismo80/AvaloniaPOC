@@ -91,7 +91,7 @@ public static class IsExtensions
 	/// <exception cref="IsNotException">Thrown if the enumerable is not empty.</exception>
 	public static bool IsEmpty(this IEnumerable actual) =>
 		!actual.Cast<object>().Any() ? true
-			: throw new IsNotException($"{actual.Format()} actually is not empty");
+			: throw new IsNotException($"{actual.Format()} is not empty");
 
 	/// <summary>
 	/// Asserts that the actual value is greater than the given <paramref name="other" />.
@@ -152,7 +152,7 @@ public static class IsExtensions
 
 	private static bool IsInTolerance<T>(this T actual, T expected, T tolerance) where T : IFloatingPoint<T> =>
 		T.Abs(actual - expected) <= tolerance * T.Max(T.One, T.Abs(expected)) ? true
-			: throw new IsNotException(actual.Actually("is not close to", expected));
+			: throw new IsNotException(actual.Actually("is not close enough to", expected));
 }
 
 public class IsNotException(string message) : Exception(message)
@@ -161,7 +161,7 @@ public class IsNotException(string message) : Exception(message)
 file static class MessageExtensions
 {
 	internal static string Actually(this object? actual, string equality, object? expected) =>
-		CreateMessage(actual.Format(), equality, expected.Format());
+		CreateMessage(actual.Format(), "actually " + equality, expected.Format());
 
 	internal static string Format(this object? value) =>
 		value.FormatValue() + value.FormatType();
