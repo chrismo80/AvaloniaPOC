@@ -3,7 +3,7 @@ using Is;
 namespace CompanyName.Core.Tests;
 
 [TestClass]
-public class IsExtensionTests
+public class IsExtensionTestMethods
 {
 	[TestMethod]
 	[DataRow(null, null)]
@@ -13,7 +13,7 @@ public class IsExtensionTests
 	[DataRow(2.2, 2.2)]
 	[DataRow(3f, 3f)]
 	[DataRow("4", "4")]
-	public void Is_Actual_Equals_Expected(object actual, object expected) =>
+	public void Is_Actual_Equals_Expected(object? actual, object? expected) =>
 		actual.Is(expected);
 
 	[TestMethod]
@@ -29,7 +29,7 @@ public class IsExtensionTests
 	[DataRow("ABC", false)]
 	[DataRow("ABC", null)]
 	[DataRow("ABC", "ABD")]
-	public void Actual_Not_Equals_Expected(object actual, object expected)
+	public void Actual_Not_Equals_Expected(object? actual, object? expected)
 	{
 		Action act = () => actual.Is(expected);
 		act.IsThrowing<IsNotException>();
@@ -48,9 +48,11 @@ public class IsExtensionTests
 		new int?[] { 1, 2, null, 4 }.Is(1, 2, null, 4);
 
 	[TestMethod]
-	public void List_Not_Equal_List() =>
-		Assert.ThrowsException<IsNotException>(() =>
-			new List<int?> { 1, 2, null, 4 }.Is(new List<int?> { 1, 2, 3, 4 }));
+	public void List_Not_Equal_List()
+	{
+		Action act = () => new List<int?> { 1, 2, null, 4 }.Is(new List<int?> { 1, 2, 3, 4 });
+		act.IsThrowing<IsNotException>();
+	}
 
 	[TestMethod]
 	public void Array_Not_Equal_Params()
@@ -71,6 +73,26 @@ public class IsExtensionTests
 	{
 		Action act = () => new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4);
 		act.IsThrowing<IsNotException>();
+	}
+
+	[TestMethod]
+	public void IEnumerable_Equal_Params()
+	{
+		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 2 == 0).Is(2, 4, 6);
+		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 3 == 0).Is(3, 6);
+		new List<int> { 1, 2, 3, 4, 5, 6 }.Where(i => i % 4 == 0).Is(4);
+	}
+
+	[TestMethod]
+	public void IsThrowing_Action()
+	{
+		static int DivideByZero(int value)
+		{
+			return value / 0;
+		}
+
+		Action action = () => _ = DivideByZero(1);
+		action.IsThrowing<Exception>();
 	}
 
 	[TestMethod]
@@ -107,18 +129,49 @@ public class IsExtensionTests
 	}
 
 	[TestMethod]
-	public void AdditionalExtensions()
+	[DataRow(3, 4)]
+	[DataRow(5.7, 9.5)]
+	[DataRow(-4, -2)]
+	[DataRow(-1, 1)]
+	[DataRow(0, 5)]
+	public void IsGreaterThan_IsSmallerThan<T>(T actual, T expected) where T : IComparable<T>
+	{
+		actual.IsSmallerThan(expected);
+		expected.IsGreaterThan(actual);
+
+		Action act = () => actual.IsGreaterThan(expected);
+		act.IsThrowing<IsNotException>().Message.Contains("is not greater than").IsTrue();
+	}
+
+	[TestMethod]
+	public void DateTime()
+	{
+		var from = new DateTime(2025, 05, 24, 11, 11, 10);
+		var to = new DateTime(2025, 05, 24, 11, 11, 11);
+
+		from.IsSmallerThan(to);
+		to.IsGreaterThan(from);
+	}
+
+	[TestMethod]
+	public void Booleans()
 	{
 		true.IsTrue();
 		false.IsFalse();
+	}
 
-		5.IsGreaterThan(4);
-		5.0.IsSmallerThan(6);
+	[TestMethod]
+	public void IsEmpty()
+	{
+		var list = new List<int>();
+		list.IsEmpty();
+	}
 
-		Array.Empty<int>().IsEmpty();
-
-		int? value = null;
-		value.IsNull();
+	[TestMethod]
+	public void IsNull()
+	{
+		List<int>? list = null;
+		list.IsNull();
 	}
 
 	[TestMethod]
@@ -127,6 +180,7 @@ public class IsExtensionTests
 	[DataRow(1000000.1, 1000000.0)]
 	[DataRow(1_000_000.0, 1_000_001.0)]
 	[DataRow(783.0123, 783.0124)]
+	[DataRow(1.0 / 3.0, 0.333333)]
 	public void IsCloseTo_Actual_Expected(object actual, object expected) =>
 		actual.Is(expected);
 
