@@ -23,7 +23,7 @@ public static class IsExtensions
 			return ex.Is<T>();
 		}
 
-		throw new IsNotException($"No {typeof(T)} was thrown");
+		throw new IsNotException($"{typeof(T)} is not thrown");
 	}
 
 	/// <summary>
