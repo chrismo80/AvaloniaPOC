@@ -130,11 +130,26 @@ public class IsExtensionTestMethods
 
 	[TestMethod]
 	[DataRow(3, 4)]
-	[DataRow(5.7, 9.5)]
-	[DataRow(-4, -2)]
+	[DataRow(5, 9)]
+	[DataRow(4, -2)]
 	[DataRow(-1, 1)]
 	[DataRow(0, 5)]
-	public void IsGreaterThan_IsSmallerThan<T>(T actual, T expected) where T : IComparable<T>
+	public void IsGreaterThan_Int_IsSmallerThan(int actual, int expected)
+	{
+		actual.IsSmallerThan(expected);
+		expected.IsGreaterThan(actual);
+
+		Action act = () => actual.IsGreaterThan(expected);
+		act.IsThrowing<IsNotException>().Message.Contains("is not greater than").IsTrue();
+	}
+
+	[TestMethod]
+	[DataRow(3.0, 4.0)]
+	[DataRow(5.7, 9.5)]
+	[DataRow(-4.0, -2.3)]
+	[DataRow(-1.1, 1.2)]
+	[DataRow(0.0, 5.3)]
+	public void IsGreaterThan_Double_IsSmallerThan(double actual, double expected)
 	{
 		actual.IsSmallerThan(expected);
 		expected.IsGreaterThan(actual);

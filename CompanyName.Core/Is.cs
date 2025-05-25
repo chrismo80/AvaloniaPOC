@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Is;
@@ -157,13 +158,13 @@ public static class IsExtensions
 			: throw new IsNotException(actual.Actually("is not close enough to", expected));
 }
 
-public class IsNotException(string message) : Exception(message)
+public class IsNotException(string message) : Exception(message.PrependCodeLine())
 { }
 
 file static class MessageExtensions
 {
 	internal static string Actually(this object? actual, string equality, object? expected) =>
-		CodeLine() + CreateMessage(actual.Format(), "actually " + equality, expected.Format());
+		FindFrame()?.CodeLine() + CreateMessage(actual.Format(), "actually " + equality, expected.Format());
 
 	internal static string Format(this object? value) =>
 		value.FormatValue() + value.FormatType();
@@ -186,23 +187,15 @@ file static class MessageExtensions
 	private static string CreateMessage(params string[] content) =>
 		Environment.NewLine + string.Join(Environment.NewLine, content) + Environment.NewLine;
 
-	private static string CodeLine()
-	{
-		var frames = new StackTrace(true).GetFrames();
+	internal static string PrependCodeLine(this string text) =>
+		FindFrame()?.CodeLine() + Environment.NewLine + text;
 
-		foreach (var frame in frames)
-		{
-			var method = frame.GetMethod();
+	private static StackFrame? FindFrame() => new StackTrace(true).GetFrames()
+		.FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace != "Is" && f.GetFileName() != null);
 
-			if (method.DeclaringType.Namespace == "Is")
-				continue;
+	private static string CodeLine(this StackFrame frame) =>
+		frame.GetFileName().GetLine(frame.GetFileLineNumber()) ?? "";
 
-			var line = frame.GetFileLineNumber();
-
-			if (line > 0 && frame.GetFileName() is string file)
-				return File.ReadAllLines(file)[line - 1].Trim();
-		}
-
-		return "call stack not found.";
-	}
+	private static string GetLine(this string? fileName, int lineNumber) => fileName == null ? ""
+		: "Line " + lineNumber + ": " + File.ReadAllLines(fileName)[lineNumber - 1].Trim();
 }
