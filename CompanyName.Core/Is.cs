@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Collections;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Is;
@@ -187,15 +188,21 @@ file static class MessageExtensions
 
 	private static string CodeLine()
 	{
-		var callStack = Environment.StackTrace.Split(Environment.NewLine);
-		var call = callStack.Skip(1).First(l => !l.Trim().StartsWith("at Is.") && !l.Trim().StartsWith("at System."));
+		var frames = new StackTrace(true).GetFrames();
 
-		var match = Regex.Match(call.Trim(), "^at (.*) in (.*):line (.*)$");
-		var file = match.Groups[2].Value;
-		var line = match.Groups[3].Value;
+		foreach (var frame in frames)
+		{
+			var method = frame.GetMethod();
 
-		var codeLine = File.ReadAllLines(file)[int.Parse(line) - 1].Trim();
+			if (method.DeclaringType.Namespace == "Is")
+				continue;
 
-		return codeLine;
+			var line = frame.GetFileLineNumber();
+
+			if (line > 0 && frame.GetFileName() is string file)
+				return File.ReadAllLines(file)[line - 1].Trim();
+		}
+
+		return "call stack not found.";
 	}
 }
