@@ -188,7 +188,10 @@ file static class MessageExtensions
 		Environment.NewLine + FindFrame()?.CodeLine() + Environment.NewLine + text;
 
 	private static StackFrame? FindFrame() => new StackTrace(true).GetFrames()
-		.FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace != "Is" && f.GetFileName() != null);
+		.FirstOrDefault(f => !f.IsInSameNamespace() && f.GetFileName() != null);
+
+	private static bool IsInSameNamespace(this StackFrame frame) =>
+		frame.GetMethod()?.DeclaringType?.Namespace == typeof(IsNotException).Namespace;
 
 	private static string CodeLine(this StackFrame frame) =>
 		frame.GetFileName().GetLine(frame.GetFileLineNumber()) ?? "";
