@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 namespace Is;
 
+public class IsNotException(string message) : Exception(message.PrependCodeLine());
+
 public static class IsExtensions
 {
 	/// <summary>
@@ -117,8 +119,11 @@ public static class IsExtensions
 	public static bool IsSmallerThan<T>(this T actual, T other) where T : IComparable<T> =>
 		actual.CompareTo(other) < 0 ? true
 			: throw new IsNotException(actual.Actually("is not smaller than", other));
+}
 
-	private static bool ShouldBe(this object actual, object[]? expected) =>
+file static class InternalExtensions
+{
+	internal static bool ShouldBe(this object actual, object[]? expected) =>
 		expected?.Length switch
 		{
 			null => actual.IsEqualTo(null),
@@ -126,7 +131,7 @@ public static class IsExtensions
 			_ => actual.ToArray().Are(expected)
 		};
 
-	private static object[] Unwrap(this object[] array) =>
+	internal static object[] Unwrap(this object[] array) =>
 		array.Length == 1 && array[0].IsEnumerable() ? array[0].ToArray() : array;
 
 	private static bool IsEnumerable(this object value) =>
@@ -139,7 +144,7 @@ public static class IsExtensions
 		values.Length == expected.Length ? Enumerable.Range(0, expected.Length).All(i => values[i].Is(expected[i]))
 			: throw new IsNotException(values.Actually("are not", expected));
 
-	private static bool IsEqualTo<T>(this T? actual, T? expected) =>
+	internal static bool IsEqualTo<T>(this T? actual, T? expected) =>
 		EqualityComparer<T>.Default.Equals(actual, expected) || actual.IsCloseTo(expected) ? true
 			: throw new IsNotException(actual.Actually("is not", expected));
 
@@ -155,8 +160,6 @@ public static class IsExtensions
 		T.Abs(actual - expected) <= epsilon * T.Max(T.One, T.Abs(expected)) ? true
 			: throw new IsNotException(actual.Actually("is not close enough to", expected));
 }
-
-public class IsNotException(string message) : Exception(message.PrependCodeLine());
 
 file static class MessageExtensions
 {
