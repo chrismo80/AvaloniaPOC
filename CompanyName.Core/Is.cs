@@ -185,7 +185,10 @@ file static class MessageExtensions
 		Environment.NewLine + string.Join(Environment.NewLine, content) + Environment.NewLine;
 
 	internal static string PrependCodeLine(this string text) =>
-		Environment.NewLine + FindFrame()?.CodeLine() + Environment.NewLine + text;
+#if DEBUG
+		Environment.NewLine + FindFrame()?.CodeLine() + Environment.NewLine +
+#endif
+		text;
 
 	private static StackFrame? FindFrame() => new StackTrace(true).GetFrames()
 		.FirstOrDefault(f => !f.IsInSameNamespace() && f.GetFileName() != null);
@@ -194,8 +197,8 @@ file static class MessageExtensions
 		frame.GetMethod()?.DeclaringType?.Namespace == typeof(IsNotException).Namespace;
 
 	private static string CodeLine(this StackFrame frame) =>
-		frame.GetFileName().GetLine(frame.GetFileLineNumber()) ?? "";
+		frame.GetFileName()?.GetLine(frame.GetFileLineNumber()) ?? "";
 
 	private static string GetLine(this string? fileName, int lineNumber) => fileName == null ? ""
-		: "Line " + lineNumber + ": " + File.ReadAllLines(fileName)[lineNumber - 1].Trim();
+		: "Line " + lineNumber + ": " + File.ReadLines(fileName).Skip(lineNumber - 1).FirstOrDefault()?.Trim();
 }
