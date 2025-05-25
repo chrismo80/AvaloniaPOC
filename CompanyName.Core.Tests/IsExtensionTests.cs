@@ -92,7 +92,7 @@ public class IsExtensionTestMethods
 		}
 
 		Action action = () => _ = DivideByZero(1);
-		action.IsThrowing<Exception>();
+		action.IsThrowing<DivideByZeroException>();
 	}
 
 	[TestMethod]

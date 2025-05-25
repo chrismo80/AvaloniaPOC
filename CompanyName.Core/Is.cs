@@ -1,7 +1,8 @@
-namespace Is;
-
 using System.Numerics;
 using System.Collections;
+using System.Text.RegularExpressions;
+
+namespace Is;
 
 public static class IsExtensions
 {
@@ -161,7 +162,7 @@ public class IsNotException(string message) : Exception(message)
 file static class MessageExtensions
 {
 	internal static string Actually(this object? actual, string equality, object? expected) =>
-		CreateMessage(actual.Format(), "actually " + equality, expected.Format());
+		CodeLine() + CreateMessage(actual.Format(), "actually " + equality, expected.Format());
 
 	internal static string Format(this object? value) =>
 		value.FormatValue() + value.FormatType();
@@ -183,4 +184,18 @@ file static class MessageExtensions
 
 	private static string CreateMessage(params string[] content) =>
 		Environment.NewLine + string.Join(Environment.NewLine, content) + Environment.NewLine;
+
+	private static string CodeLine()
+	{
+		var callStack = Environment.StackTrace.Split(Environment.NewLine);
+		var call = callStack.Skip(1).First(l => !l.Trim().StartsWith("at Is.") && !l.Trim().StartsWith("at System."));
+
+		var match = Regex.Match(call.Trim(), "^at (.*) in (.*):line (.*)$");
+		var file = match.Groups[2].Value;
+		var line = match.Groups[3].Value;
+
+		var codeLine = File.ReadAllLines(file)[int.Parse(line) - 1].Trim();
+
+		return codeLine;
+	}
 }
