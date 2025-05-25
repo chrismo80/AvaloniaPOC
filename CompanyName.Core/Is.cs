@@ -1,8 +1,6 @@
 using System.Numerics;
 using System.Collections;
 using System.Diagnostics;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Is;
 
@@ -26,7 +24,7 @@ public static class IsExtensions
 			return ex.Is<T>();
 		}
 
-		throw new IsNotException($"{typeof(T)} is not thrown");
+		throw new IsNotException($"\n{typeof(T)}\nactually was not thrown");
 	}
 
 	/// <summary>
@@ -94,7 +92,7 @@ public static class IsExtensions
 	/// <exception cref="IsNotException">Thrown if the enumerable is not empty.</exception>
 	public static bool IsEmpty(this IEnumerable actual) =>
 		!actual.Cast<object>().Any() ? true
-			: throw new IsNotException($"{actual.Format()} is not empty");
+			: throw new IsNotException($"\n{actual.Format()}\nactually is not empty\n");
 
 	/// <summary>
 	/// Asserts that the actual value is greater than the given <paramref name="other" /> value.
@@ -158,13 +156,12 @@ public static class IsExtensions
 			: throw new IsNotException(actual.Actually("is not close enough to", expected));
 }
 
-public class IsNotException(string message) : Exception(message.PrependCodeLine())
-{ }
+public class IsNotException(string message) : Exception(message.PrependCodeLine());
 
 file static class MessageExtensions
 {
 	internal static string Actually(this object? actual, string equality, object? expected) =>
-		FindFrame()?.CodeLine() + CreateMessage(actual.Format(), "actually " + equality, expected.Format());
+		CreateMessage(actual.Format(), "actually " + equality, expected.Format());
 
 	internal static string Format(this object? value) =>
 		value.FormatValue() + value.FormatType();
@@ -188,7 +185,7 @@ file static class MessageExtensions
 		Environment.NewLine + string.Join(Environment.NewLine, content) + Environment.NewLine;
 
 	internal static string PrependCodeLine(this string text) =>
-		FindFrame()?.CodeLine() + Environment.NewLine + text;
+		Environment.NewLine + FindFrame()?.CodeLine() + Environment.NewLine + text;
 
 	private static StackFrame? FindFrame() => new StackTrace(true).GetFrames()
 		.FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace != "Is" && f.GetFileName() != null);

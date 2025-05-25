@@ -131,7 +131,7 @@ public class IsExtensionTestMethods
 	[TestMethod]
 	[DataRow(3, 4)]
 	[DataRow(5, 9)]
-	[DataRow(4, -2)]
+	[DataRow(-4, -2)]
 	[DataRow(-1, 1)]
 	[DataRow(0, 5)]
 	public void IsGreaterThan_Int_IsSmallerThan(int actual, int expected)
